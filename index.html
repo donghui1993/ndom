@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hello Nodel</title>
+    <script src="nodle.js"></script>
+    <!-- <script src="vue.js"></script> -->
+</head>
+
+<body>
+    <script>
+
+        var a = nodel("#app>p+button[name=1]+input[name=1]",
+            {
+                data: {
+                    li: 'Some list part'
+                },
+                parse: {
+                    "#app": {
+                        html: nodel('ul>li*5', {
+                            parse: {
+                                li: {
+                                    data: {
+                                        names: ["张三", "李四", "王五", "赵六", '徐七']
+                                    },
+                                    html: function (data) {
+                                        var _this = this;
+                                        return nodel('span', {
+                                            parse: {
+                                                span: {
+                                                    data: {
+                                                        names: ["one", "two", "three", "four", 'five']
+                                                    },
+                                                    text: function (ndata) {
+                                                        return ndata.names[_this.index] + "." + data.names[_this.index]
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+            .parent(document.body)
+    </script>
+</body>
+
+</html>
