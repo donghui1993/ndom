@@ -1,6 +1,6 @@
 # ndom
 a dom generator zen coding style like
-#USE ndom basic
+## USE ndom basic
 ```javascript
 ndom('div').html() 
 //==> <div></div>
@@ -18,7 +18,7 @@ ndom('div[name=myname]{ Hello Ndom ! }+span{ new dom }').html()
 //==> <div name="myname"> Hello Ndom ! </div><span> new dom </span>
 ```
 
-#USE ndom parse
+## USE ndom parse
 ```javascript
 var div = {
 	html:"<div>this is new div in parent</div>"
@@ -34,7 +34,7 @@ ndom('div+.myname',{
 }).html() 
 
 ```
-#APPEND to page
+## APPEND to page
 ```javascript
 var div = {
 	html:"<div>this is new div in parent</div>"
@@ -67,7 +67,7 @@ ndom('div+.myname',{
 }).parent(document.body) // must be cover 
 ```
 
-#APPEND to page with init 
+## APPEND to page with init 
 ```javascript
 var div = {
 	html:"<div>this is new div in parent</div>"
@@ -88,4 +88,4 @@ ndom('div+.myname',{
 .parent(document.body) // must be cover 
 ```
 
-#MORE To be continued
+# MORE To be continued
