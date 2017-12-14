@@ -595,7 +595,7 @@
             if (typeof text == "function") {
                 text = text.call(ele, data);
             }
-            if (text instanceof Nodel) {
+            if (text instanceof Ndom) {
                 text = text.html();
             }
             ele.innerText = text;
@@ -618,7 +618,7 @@
             if (typeof _html == "function") {
                 _html = _html.call(ele, data);
             }
-            if (_html instanceof Nodel) {
+            if (_html instanceof Ndom) {
                 _html = _html.html();
             }
             ele.innerHTML = _html;
@@ -626,7 +626,7 @@
         }
         return result;
     }
-    function Nodel(ncode, options, parent) {
+    function Ndom(ncode, options, parent) {
         nocde = wash(ncode);
         let vitualNode = loader(nocde, options);
         if (!parent) {
@@ -660,7 +660,7 @@
         this.mode = mode;
         return this;
     }
-    Nodel.prototype.parent = function (dom) {
+    Ndom.prototype.parent = function (dom) {
         if (!dom) {
             return this._parent;
         }
@@ -674,23 +674,23 @@
 
         return this;
     }
-    Nodel.prototype.html = function () {
+    Ndom.prototype.html = function () {
         return this._nodle.html;
     }
 
     /**
      * @param {String} ncode  relationship of ncode for create domcument
      * @param {Object} options options of dom
-     * @param {HTMLElement}  parent nodel dom position
+     * @param {HTMLElement}  parent ndom dom position
      */
-    function nodel(ncode, options, parent) {
+    function ndom(ncode, options, parent) {
         if (typeof ncode != 'string') {
             return "";
         }
         if (!options) {
             options = {};
         }
-        return new Nodel(ncode, options, parent);
+        return new Ndom(ncode, options, parent);
     }
-    window.nodel = nodel;
+    window.ndom = ndom;
 }()

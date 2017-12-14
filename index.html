@@ -5,22 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Hello Nodel</title>
-    <script src="nodle.js"></script>
+    <title>Hello ndom</title>
+    <script src="ndom.js"></script>
     <!-- <script src="vue.js"></script> -->
 </head>
 
 <body>
     <script>
 
-        var a = nodel("#app>p+button[name=1]+input[name=1]",
+        var a = ndom("#app>p+button[name=1]+input[name=1]",
             {
                 data: {
                     li: 'Some list part'
                 },
                 parse: {
                     "#app": {
-                        html: nodel('ul>li*5', {
+                        html: ndom('ul>li*5', {
                             parse: {
                                 li: {
                                     data: {
@@ -28,7 +28,7 @@
                                     },
                                     html: function (data) {
                                         var _this = this;
-                                        return nodel('span', {
+                                        return ndom('span', {
                                             parse: {
                                                 span: {
                                                     data: {
