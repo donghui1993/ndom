@@ -7,31 +7,93 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Hello ndom</title>
     <script src="ndom-cop.js"></script>
-    <!-- <script src="vue.js"></script> -->
+    <script src="src/vue.js"></script>
 </head>
 
 <body>
+    <div id="app">{{key.key}}</div>
     <script>
-        var body = ".content>.header+.content-body+.footer"
-        var a = ndom(body,{
+        var as = ndom('div>span',{
             parse:{
-                '.header':{
-                    data:{name:"header"},
+                div:{
+                    classList:["parent"],
+                    data:{name:2},
                     text:function(){
                         return this.dataGet('name')
-                    }
+                    },
                 },
-                '.content-body':{
-                    data:{name:'body'},
-                    text:function(){
-                        return this.dataGet('name')
+                span:{
+                    data:{ name:1 },
+                    html:function(){
+                        this.virtual.parent.dataSet('name',10)
+                        return this.dataGet('name') +  this.virtual.parent.dataGet('name')
+                    },
+                    $click:function(){
+                        var name = this.dataGet('name') ;
+                        this.dataSet('name',name+1);
                     }
-                },
-                '.footer':{
-                    text:"footer"
                 }
             }
         },document.body)
+
+        // 定义一个对象,这个对象是用来取值的内容
+        //注册一个监听主体
+        var observer = {
+            watch(obj) {
+                if (!obj.__ob___) {
+                    this.val(obj);
+                }
+            },
+            val(obj) {
+                for (var key in obj) {
+                    this.define(obj, key, obj[key])
+                }
+                obj.__ob___ = {};
+            },
+            define(obj, key, val) {
+                let propDesc = Object.getOwnPropertyDescriptor(obj, key);
+                if (propDesc && !propDesc.configurable) {
+                    return
+                }
+                var getter = propDesc && propDesc.get;
+                var setter = propDesc && propDesc.set;
+
+                Object.defineProperty(obj, key, {
+                    set(newVal) {
+                        var value = getter ? getter.call(obj) : val;
+                        if (newVal === value || (newVal !== newVal && value !== value)) {
+                            return
+                        }  
+                        if (setter) {
+                            setter.call(obj, newVal);
+                        } else {
+                            val = newVal;
+                        }
+                        ischange = true;
+                    },
+                    get() {
+                        var value = getter ? getter.call(obj) : val
+                        return value;
+                    }
+                });
+            }
+        }
+        //注册一个监听对象,并且对监听对象内容进行监听
+        var tag = {
+            get key() {
+                return "value"
+            }
+        }
+        var ischange = false;
+        //对对象进行监听
+        observer.watch(tag);
+        var data = { key: {
+            key:'value' 
+        }}
+        var vue = new Vue({
+            el: "#app",
+            data: data
+        })
     </script>
 </body>
 

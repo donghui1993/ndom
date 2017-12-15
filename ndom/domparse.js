@@ -7,9 +7,16 @@ function treeParse(virtualNode, parent) {
     let loopSize = virtualNode.size;
     let children = virtualNode.children;
     let tag = virtualNode.tag;
+
     virtualNode.parent = parent;
     if (!virtualNode.doms) {
         virtualNode.doms = [];
+    }
+    if (typeof loopSize == 'function') {
+        loopSize = parseInt(loopSize.call(virtualNode.data || {}));
+    }
+    if (isNaN(loopSize)) {
+        loopSize = 1;
     }
     for (let i = 0; i < loopSize; i++) {
         if (tag) {
@@ -28,21 +35,37 @@ function treeParse(virtualNode, parent) {
         }
     }
 }
-function dataObser(data) {
-    for (var k in data) {
-        let val = data[k];
-        let key = k;
-        Object.defineProperty(data, k, {
-            set(val) {
-                key = val;
-            },
-            get() {
-                return key;
+function getset(ele) {
+    ele.dataGet = function (name) {
+        if (this.virtual.data) {
+            return this.virtual.data[name];
+        }
+    }
+    ele.dataSet = function (name, val) {
+        if (this.virtual.data) {
+            let caller = arguments.callee.caller;
+            this.virtual.data[name] = val;
+            if (caller == this.virtual._html || caller == this.virtual.text) {
+            } else {
+                let exec = this.virtual._html || this.virtual.text;
+                if (this.virtual._html) {
+                    this.innerHTML = exec.call(this)
+                } else if (this.virtual.text) {
+                    if(this.innerText){
+                        this.childNodes[0].textContent  =exec.call(this)
+                    }else{
+                        this.innerText = exec.call(this)
+                    }
+                }
             }
-        })
-        data[k] = val;
+            return val;
+        }
     }
 }
+/**
+ * Observer Data to update dom text or html
+ * @param {Any} data 
+ */
 function createDOM(virtualNode, index) {
     let ele = document.createElement(virtualNode.tag);
     let data = virtualNode.data;
@@ -51,22 +74,7 @@ function createDOM(virtualNode, index) {
     ele.index = index;
     parent.appendChild(ele);
     ele.virtual = virtualNode;
-    dataObser(data)
-    ele.dataGet = function (name) {
-        if (this.virtual.data) {
-            return this.virtual.data[name];
-        }
-    }
-    ele.dataSet = function (name, val) {
-        if (this.virtual.data) {
-            this.virtual.data[name] = val;
-            if (arguments.callee.caller == this.virtual._html) {
-            } else {
-                this.innerHTML = this.virtual._html.call(ele);
-            }
-            return val;
-        }
-    }
+    getset(ele);
     let text = virtualNode.text;
     if (text) { // cut up
         if (typeof text == "function") {
@@ -101,5 +109,14 @@ function createDOM(virtualNode, index) {
         ele.innerHTML = _html;
         result.noMore = true;
     }
+    eventBind(virtualNode,ele);
     return result;
+}
+function eventBind(virtualNode,ele){
+    let keys = Object.keys(virtualNode)||[];
+    keys.forEach(function(eventName){
+        if(eventName.startsWith("$")){
+            ele.addEventListener(eventName.substring(1),virtualNode[eventName],{useCapture:false})
+        }
+    })
 }

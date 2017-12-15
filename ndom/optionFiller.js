@@ -34,8 +34,6 @@ function optionFiller(virtualnode, parse) {
     })
 }
 optionFiller.copy = function (virtualnode, val) {
-
-
     let valkeys = Object.keys(val);
     if (!val || !Object.keys(val).length) {
         return
@@ -44,7 +42,7 @@ optionFiller.copy = function (virtualnode, val) {
         let value = val[key];
         if (key == "html") {
             virtualnode._html = value;
-        } else if (value instanceof Array) {
+        }else if (value instanceof Array) {
             if (virtualnode[key]) {
                 virtualnode[key].concat(value)
             } else {
