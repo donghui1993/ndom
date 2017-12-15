@@ -13,28 +13,27 @@
 <body>
     <div id="app">{{key.key}}</div>
     <script>
-        var as = ndom('div>span',{
-            parse:{
-                div:{
-                    classList:["parent"],
-                    data:{name:2},
-                    text:function(){
+        var as = ndom('div>span', {
+            parse: {
+                div: {
+                    classList: ["parent"],
+                    data: { name: 2 },
+                    text: function () {
                         return this.dataGet('name')
                     },
                 },
-                span:{
-                    data:{ name:1 },
-                    html:function(){
-                        this.virtual.parent.dataSet('name',10)
-                        return this.dataGet('name') +  this.virtual.parent.dataGet('name')
+                span: {
+                    data: { name: 1 },
+                    html: function () {
+                        return '<div>' + (this.dataGet('name') + this.parent.dataGet('name')) + '</div>';
                     },
-                    $click:function(){
-                        var name = this.dataGet('name') ;
-                        this.dataSet('name',name+1);
+                    $click: function () {
+                        var name = this.dataGet('name');
+                        this.dataSet('name', name + 1);
                     }
                 }
             }
-        },document.body)
+        }, document.body)
 
         // 定义一个对象,这个对象是用来取值的内容
         //注册一个监听主体
@@ -63,7 +62,7 @@
                         var value = getter ? getter.call(obj) : val;
                         if (newVal === value || (newVal !== newVal && value !== value)) {
                             return
-                        }  
+                        }
                         if (setter) {
                             setter.call(obj, newVal);
                         } else {
@@ -87,9 +86,11 @@
         var ischange = false;
         //对对象进行监听
         observer.watch(tag);
-        var data = { key: {
-            key:'value' 
-        }}
+        var data = {
+            key: {
+                key: 'value'
+            }        
+}
         var vue = new Vue({
             el: "#app",
             data: data

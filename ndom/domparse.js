@@ -74,6 +74,11 @@ function createDOM(virtualNode, index) {
     ele.index = index;
     parent.appendChild(ele);
     ele.virtual = virtualNode;
+    Object.defineProperty(ele,'parent',{
+        get(){
+            return this.virtual.parent;
+        }
+    })
     getset(ele);
     let text = virtualNode.text;
     if (text) { // cut up
