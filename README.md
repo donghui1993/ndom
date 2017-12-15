@@ -96,4 +96,32 @@ ndom('div+.myname',{
 .parent(document.body) // must be cover 
 ```
 
+## bind event 
+```javascript
+var as = ndom('div>span', {
+	parse: {
+		div: {
+			classList: ["content"], // classList property
+			data: { name: 'old parent' }, // dataGet for observer and  dataPost for update dom or other
+			text: function () {
+				// this is HTMLElement node
+				return this.dataGet('name')
+			},
+		},
+		span: {
+			data: { name: 'old child' },
+			html: function () {
+				return '<div>' + ( this.dataGet('name')) + '</div>';
+			},
+			$click: function () { // $ is event symbol use addEventListener
+				// click update ;
+				// this.parent is HTMLElement too
+				this.parent.dataSet('name','new parent')  // update parent
+				this.dataSet('name', 'click child after update parent'); // update self
+			}
+		}
+	}
+}, document.body)
+```
+
 # MORE To be continued
