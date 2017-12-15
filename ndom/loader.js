@@ -20,6 +20,7 @@ function loader(ncode, options, virtualnode) {
     }
     return virtualnode;
 }
+
 /**
  * simple code without same level symbol
  * @param {String} simplecode 
