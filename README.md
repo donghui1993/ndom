@@ -1,5 +1,13 @@
 # ndom
 a dom generator zen coding style like
+
+## download 
+
+```shell
+git git@github.com:donghui1993/ndom.git
+npm run build
+```
+
 ## USE ndom basic
 ```javascript
 ndom('div').html() 
