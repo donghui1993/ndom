@@ -12,42 +12,26 @@
 
 <body>
     <script>
-
-        var a = ndom("#app>p+button[name=1]+input[name=1]",
-            {
-                data: {
-                    li: 'Some list part'
-                },
-                parse: {
-                    "#app": {
-                        text: ndom('ul>li*5', {
-                            parse: {
-                                li: {
-                                    data: {
-                                        names: ["张三", "李四", "王五", "赵六", '徐七']
-                                    },
-                                    html: function (data) {
-                                        var _this = this;
-                                        return ndom('span', {
-                                            parse: {
-                                                span: {
-                                                    data: {
-                                                        names: ["one", "two", "three", "four", 'five']
-                                                    },
-                                                    text: function (ndata) {
-                                                        return ndata.names[_this.index] + "." + data.names[_this.index]
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            }
-                        })
+        var body = ".content>.header+.content-body+.footer"
+        var a = ndom(body,{
+            parse:{
+                '.header':{
+                    data:{name:"header"},
+                    text:function(){
+                        return this.dataGet('name')
                     }
+                },
+                '.content-body':{
+                    data:{name:'body'},
+                    text:function(){
+                        return this.dataGet('name')
+                    }
+                },
+                '.footer':{
+                    text:"footer"
                 }
-            })
-            .parent(document.body)
+            }
+        },document.body)
     </script>
 </body>
 

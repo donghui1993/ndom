@@ -260,7 +260,7 @@
         [
             [/\[.+\]/, "attributes"],
             [/\{.+\}/, "text"],
-            [/\.\w+/, "classList"],
+            [/\.\w+[_-]?\w+$/, "classList"],
             [/#\w+/, "id"]
         ].forEach(function (piter) {
             if (piter[0].test(simplecode)) {
@@ -351,7 +351,7 @@
      */
     analyzer.classList = function splitClass(simplecode) {
         let sameclass = "";
-        let classList = (simplecode.match(/\.\w+/g) || [])
+        let classList = (simplecode.match(/\.\w+[_-]?\w+$/g) || [])
             .map(function (clazz) {
                 simplecode = simplecode.replace(clazz, "")
                 return clazz.slice(1); // remove '.'
@@ -583,13 +583,45 @@
             }
         }
     }
+    function dataObser(data) {
+        for (var k in data) {
+            let val = data[k];
+            let key = k;
+            Object.defineProperty(data, k, {
+                set(val) {
+                    key = val;
+                },
+                get() {
+                    return key;
+                }
+            })
+            data[k] = val;
+        }
+    }
     function createDOM(virtualNode, index) {
         let ele = document.createElement(virtualNode.tag);
-        ele.index = index;
         let data = virtualNode.data;
         let parent = virtualNode.parent;
-        parent.appendChild(ele);
         let result = { dom: ele, noMore: false }
+        ele.index = index;
+        parent.appendChild(ele);
+        ele.virtual = virtualNode;
+        dataObser(data)
+        ele.dataGet = function (name) {
+            if (this.virtual.data) {
+                return this.virtual.data[name];
+            }
+        }
+        ele.dataSet = function (name, val) {
+            if (this.virtual.data) {
+                this.virtual.data[name] = val;
+                if(arguments.callee.caller == this.virtual._html){
+                }else{
+                    this.innerHTML = this.virtual._html.call(ele);
+                }
+                return val;
+            }
+        }
         let text = virtualNode.text;
         if (text) { // cut up
             if (typeof text == "function") {
@@ -654,7 +686,7 @@
                 return this;
             }
         }
-        this._nodle = vitualNode;
+        this._ndom = vitualNode;
         this.data = options.data;
         this._parent = parent;
         this.mode = mode;
@@ -665,7 +697,7 @@
             return this._parent;
         }
         if (!this._parent || this._parent.isVirtual) {
-            dom.innerHTML = this._nodle.html;
+            dom.innerHTML = this._ndom.html;
             this._parent = dom;
             if (this["mode_" + this.mode]) { // if mode is prepare
                 this[this.mode] = this[this.mode](this.data);
@@ -675,7 +707,7 @@
         return this;
     }
     Ndom.prototype.html = function () {
-        return this._nodle.html;
+        return this._ndom.html;
     }
 
     /**

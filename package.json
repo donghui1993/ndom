@@ -1,0 +1,20 @@
+{
+  "name": "nodle",
+  "version": "1.0.0",
+  "description": "a dom generator zen coding style like",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/donghui1993/ndom.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/donghui1993/ndom/issues"
+  },
+  "homepage": "https://github.com/donghui1993/ndom#readme"
+}
