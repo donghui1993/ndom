@@ -1,0 +1,14 @@
+{
+    "out":"./ndom-cop.js",
+    "basepath":"./ndom/",
+    "path":[
+        "define.js",
+        "tool.js",
+        "wash.js",
+        "loader.js",
+        "analyzer.js",
+        "optionFiller.js",
+        "domparse.js",
+        "ndom.js"
+    ]
+}
