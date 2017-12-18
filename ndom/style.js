@@ -43,6 +43,7 @@ function styleParse(style,parentname,styleElement){
         for(var key in style){
             let val = style[key];
             let _key = key.replace(/([A-Z]+)/g,"-$1").toLocaleLowerCase();
+            
             if(key.startsWith('$')){ // compose style like  $font:{ size:"",color:""}
                 Object.assign(lastSelector,composeStyle(key.substring(1),val));
             }
