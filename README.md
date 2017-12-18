@@ -123,5 +123,52 @@ var as = ndom('div>span', {
 	}
 }, document.body)
 ```
+## STYLES in ndom
+```javascript
+var as = ndom('div.name>span', {
+            style: { // global style 
+                ".name": {
+                    "_.green":{
 
+                    },
+                    color: "red",
+                    '$font': {
+                        size: "15px"
+                    },
+                    span: {
+                        color:"red",
+                        "fontSize":"20px"
+                    }
+                }
+            },
+            parse: {
+                div: {
+                    classList: ["parent"],
+                    data: { name: 'old parent' },
+                    text: function () {
+                        return this.dataGet('name')
+                    },
+                    style: { // inline
+                        color: "#f0f0f0",
+                        fontSize: "16px",
+                    }
+                },
+                '.parent': {
+                    style: {// inline
+                        fontSize: "20px"
+                    }
+                },
+                span: {
+                    data: { name: 'old child' },
+                    html: function () {
+                        return '<div>' + this.dataGet('name') + '</div>';
+                    },
+                    $click: function () {
+                        this.parent.dataSet('name', 'new parent')
+                        this.dataSet('name', 'click child after update parent');
+                    }
+                }
+            }
+        }, document.body)
+```
 # MORE To be continued

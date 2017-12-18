@@ -103,6 +103,12 @@ function createDOM(virtualNode, index) {
             ele.setAttribute(key, attrs[key])
         }
     }
+    if(virtualNode.style){
+        let style = virtualNode.style;
+        for(let key in style){
+            ele.style[key.replace(/([A-Z]+)/g,"-$1").toLocaleLowerCase()] = style[key];
+        }
+    }
     let _html = virtualNode._html;
     if (_html) { // cut up
         if (typeof _html == "function") {
