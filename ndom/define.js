@@ -28,6 +28,19 @@ Array.prototype.nreduce = function (fn) {
     }
     return this;
 }
+var basestr = "0123456789qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM";
+
+function uuid(length,prefix){
+  let str = "";
+  if(prefix === void 0){
+    prefix ="";
+  }
+  length -= prefix.length;
+  while(str.length<length){
+    str += basestr[ parseInt( Math.random()*basestr.length)]
+  }
+  return prefix + str;
+}
 /**
  * define virtual node
  */

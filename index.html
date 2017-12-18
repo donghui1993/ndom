@@ -13,23 +13,28 @@
 <body>
     <script>
         var as = ndom('div.name>span', {
-            styledef:{
-                maxin:function(color){
-                    return color;
+            styled: {
+                maxin: function (color) {
+                    switch (color) {
+                        case 'green':
+                            return "20px";
+                        default:
+                            return "16px"
+                    }
                 }
             },
             style: { // 全局样式表
                 ".name": {
-                    "_.green":{
-
+                    "_.green": {
+                        color: 'green'
                     },
                     color: "red",
                     '$font': {
                         size: "%maxin(green)"
                     },
                     span: {
-                        color:"red",
-                        "fontSize":"20px"
+                        color: "red",
+                        "fontSize": "20px"
                     }
                 }
             },

@@ -1,21 +1,22 @@
+require("./loader");
+require("./style");
+require("./domparse");
+
 function Ndom(ncode, options, parent) {
-    nocde = wash(ncode);
-    let vitualNode = loader(nocde, options);
+    let vitualNode = loader(wash(ncode), options);
+    let mode = options.mode;
+    this.id = uuid(32);
+    if (!ndom.styleNames) {
+        ndom.styleNames = [].slice.call(getComputedStyle(document.body));
+    }
     if (!parent) {
         parent = document.createElement('div');
         parent.isVirtual = true;
     }
-    treeParse(vitualNode, parent);
-    if(!ndom.styleNames){
-        ndom.styleNames =  [].slice.call(getComputedStyle(document.body));
-    }
-    styleShow(options.style)
-    let mode = options.mode;
     
     if (mode) {
         this[mode] = function (fn) {
             // it could be run until dom appened in a parent dom
-            //TODO: some error code of mode 
             if (this._parent && !this._parent.isVirtual) {
                 if (this["mode_" + this.mode]) {
                     let result = this["mode_" + this.mode](this.data);
@@ -31,10 +32,12 @@ function Ndom(ncode, options, parent) {
             return this;
         }
     }
+    treeParse(vitualNode, parent);
     this._ndom = vitualNode;
     this.data = options.data;
     this._parent = parent;
     this.mode = mode;
+    styleShow(this, options)
     return this;
 }
 Ndom.prototype.parent = function (dom) {
