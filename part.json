@@ -9,6 +9,7 @@
         "analyzer.js",
         "optionFiller.js",
         "domparse.js",
+        "style.js",
         "ndom.js"
     ]
 }

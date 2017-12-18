@@ -9,7 +9,7 @@ function appendFileSync(data){
 function watch(){
     part.path.forEach(filepath => {
         fs.watchFile(part.basepath+filepath,(currstate)=>{
-            console.log('file  ' + filepath  + ' is change')
+            console.log('[file  changed] ' + filepath)
             build()
         })
     });
@@ -21,7 +21,8 @@ function build(){
         appendFileSync(file)
     });
     appendFileSync("exp.ndom = ndom;});")
-    console.log('build done')
+    var now = new Date;
+    console.log("["+now.toLocaleDateString() +" "+ now.toLocaleTimeString() + '] build done')
 }
 watch();
 build();

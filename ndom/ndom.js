@@ -6,7 +6,12 @@ function Ndom(ncode, options, parent) {
         parent.isVirtual = true;
     }
     treeParse(vitualNode, parent);
+    if(!ndom.styleNames){
+        ndom.styleNames =  [].slice.call(getComputedStyle(document.body));
+    }
+    styleShow(options.style)
     let mode = options.mode;
+    
     if (mode) {
         this[mode] = function (fn) {
             // it could be run until dom appened in a parent dom

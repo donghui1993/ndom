@@ -7,12 +7,27 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Hello ndom</title>
     <script src="ndom-cop.js"></script>
-    <script src="src/vue.js"></script>
+    <!-- <script src="src/vue.js"></script> -->
 </head>
 
 <body>
     <script>
-        var as = ndom('div>span', {
+        var as = ndom('div.name>span', {
+            style: { // 全局样式表
+                ".name": {
+                    "_.green":{
+                        
+                    },
+                    color: "red",
+                    '$font': {
+                        size: "15px"
+                    },
+                    span: {
+                        color:"red",
+                        "fontSize":"20px"
+                    }
+                }
+            },
             parse: {
                 div: {
                     classList: ["parent"],
@@ -20,14 +35,23 @@
                     text: function () {
                         return this.dataGet('name')
                     },
+                    style: { // 内联样式
+                        color: "red",
+                        fontSize: "16px",
+                    }
+                },
+                '.parent': {
+                    style: {// 内联样式
+                        fontSize: "20px"
+                    }
                 },
                 span: {
                     data: { name: 'old child' },
                     html: function () {
-                        return '<div>' + ( this.dataGet('name')) + '</div>';
+                        return '<div>' + this.dataGet('name') + '</div>';
                     },
                     $click: function () {
-                        this.parent.dataSet('name','new parent')
+                        this.parent.dataSet('name', 'new parent')
                         this.dataSet('name', 'click child after update parent');
                     }
                 }

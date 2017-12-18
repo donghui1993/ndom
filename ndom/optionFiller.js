@@ -11,26 +11,35 @@ function optionFiller(virtualnode, parse) {
     keys.forEach(function (key) {
         // find from classList,id,tag,attributes
         if (virtualnode.classList) {
+            let isParse = false;
             virtualnode.classList.forEach(function (clazz) {
                 if ("." + clazz == key) {
                     optionFiller.copy(virtualnode, parse[key])
                 }
             });
-        } else if (key == "#" + virtualnode.id) {
-            optionFiller.copy(virtualnode, parse[key])
-        } else if (key == virtualnode.tag) {
-            optionFiller.copy(virtualnode, parse[key])
-        } else {
-            if (virtualnode.attributes) {
-                Object.keys(virtualnode.attributes).forEach(function (attrkey) {
-                    let kv = "[" + attrkey + "=" + virtualnode.attributes[attrkey] + "]"
-                    if (key == kv) {
-                        optionFiller.copy(virtualnode, parse[key])
-                    }
-                });
-
+            if (isParse) {
+                return;
             }
         }
+        if (key == "#" + virtualnode.id) {
+            optionFiller.copy(virtualnode, parse[key])
+            return;
+        }
+        if (key == virtualnode.tag) {
+            optionFiller.copy(virtualnode, parse[key])
+            return;
+        }
+
+        if (virtualnode.attributes) {
+            Object.keys(virtualnode.attributes).forEach(function (attrkey) {
+                let kv = "[" + attrkey + "=" + virtualnode.attributes[attrkey] + "]"
+                if (key == kv) {
+                    optionFiller.copy(virtualnode, parse[key])
+                }
+            });
+
+        }
+
     })
 }
 optionFiller.copy = function (virtualnode, val) {
@@ -40,21 +49,28 @@ optionFiller.copy = function (virtualnode, val) {
     }
     valkeys.forEach(function (key) {
         let value = val[key];
+        let preValue = virtualnode[key];
         if (key == "html") {
             virtualnode._html = value;
-        }else if (value instanceof Array) {
-            if (virtualnode[key]) {
-                virtualnode[key].concat(value)
+        }
+        else if (key == "style") {
+            virtualnode.style = styleMixin(preValue, value);
+        }
+        else if (value instanceof Array) {
+            if (preValue) {
+                virtualnode[key] = preValue.concat(value)
             } else {
                 virtualnode[key] = value;
             }
-        } else if (value + "" == "[object Object]") {
-            if (virtualnode[key]) {
+        }
+        else if (value + "" == "[object Object]") {
+            if (preValue) {
                 Object.assign(virtualnode[key], value)
             } else {
                 virtualnode[key] = value;
             }
-        } else {
+        }
+        else {
             virtualnode[key] = value;
         }
     })
