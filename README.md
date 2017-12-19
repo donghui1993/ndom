@@ -1,6 +1,6 @@
 # ndom
 a dom generator zen coding style like
-
+css function css prefix support !
 ## download 
 
 ```shell
@@ -166,6 +166,68 @@ var as = ndom('div.name>span', {
                     $click: function () {
                         this.parent.dataSet('name', 'new parent')
                         this.dataSet('name', 'click child after update parent');
+                    }
+                }
+            }
+        }, document.body)
+```
+## css function css prefix support !
+```javascript
+ var as = ndom('div.name>span', {
+            parse: {
+                div: {
+                    classList: ["parent"],
+                    data: { name: 'old parent' },
+                    text: function () {
+                        return this.dataGet('name')
+                    },
+                    style: { // 内联样式
+                        //color: "#f0f0f0",
+                        fontSize: "16px",
+                    }
+                },
+                '.parent': {
+                    style: {// 内联样式
+                        fontSize: "20px"
+                    }
+                },
+                span: {
+                    style: { // 内联样式
+                        color: "blue",
+                        fontSize: "16px",
+                    },
+                    data: { name: 'old child' },
+                    html: function () {
+                        return '<div>' + this.dataGet('name') + '</div>';
+                    },
+                    $click: function () {
+                        this.parent.dataSet('name', 'new parent')
+                        this.dataSet('name', 'click child after update parent');
+                    }
+                }
+            },
+            styled: {
+                maxin: function (color) {
+                    switch (color) {
+                        case 'green':
+                            return "20px";
+                        default:
+                            return "16px"
+                    }
+                }
+            },
+            style: { // 全局样式表
+                ".name": {
+                    "_.parent": {
+                        color: 'green'
+                    },
+                    color: "red",
+                    '$font': {
+                        size: "%maxin(green)"
+                    },
+                    span: {
+                        color: "red",
+                        "fontSize": "20px"
                     }
                 }
             }
