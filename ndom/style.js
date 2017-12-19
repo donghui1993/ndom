@@ -1,3 +1,4 @@
+require('./browser')
 /**
  * styled is function define use in style partment
  * styled use start at %
@@ -32,7 +33,7 @@ function styleShow(ndom, options) {
         }
     }
     let styleElement = document.createElement('style');
-    styleElement.setAttribute('id',ndom.id)
+    styleElement.setAttribute('id', ndom.id)
     document.querySelector("head").appendChild(styleElement);
     styleElement.innerHTML = arr.join("\n")
 }
@@ -53,51 +54,65 @@ function styleParse(style, styled, parentname, styleElement) {
             let _key = key.replace(/([A-Z]+)/g, "-$1").toLocaleLowerCase();
             if (key.startsWith('$')) {
                 // compose style like  $font:{ size:"",color:""}
-                Object.assign(lastSelector, composeStyle(key.substring(1), val,styled));
+                Object.assign(lastSelector, composeStyle(key.substring(1), val, styled));
             }
-            else if(key.startsWith("_")){
-                if(key == "_"){
+            else if (key.startsWith("_")) {
+                if (key == "_") {
                     // only self
-                    console.error("illegal : not just use _ for self because it is useless at  ["+parentname+"]")
+                    console.error("illegal : not just use _ for self because it is useless at  [" + parentname + "]")
                 }
-                else{
-                    let selector =  parentname+key.substring(1);
+                else {
+                    let selector = parentname + key.substring(1);
                     styleElement[selector] = new StyleContent
                     styleParse(val, styled, selector, styleElement)
                 }
             }
-            else if (styleNames.indexOf(_key) === -1) {
-                // is a css selector
-                if (val + "" == "[object Object]") {
-                    let selector = next + key;
-                    styleElement[selector] = new StyleContent
-                    styleParse(val, styled, selector, styleElement)
-                } else {
-                    console.error("illegal : not such style [" + key + "]  ");
+            else {
+                let hasin = styleNames.indexOf(_key);
+                let browserStyle = "";
+                prefix.forEach(function (pre) {
+                    let styleName = pre + _key;
+                    if (hasin === -1) {
+                        hasin = styleNames.indexOf(styleName);
+                    }
+                    if (browserStyle == "" && hasin > - 1) {
+                        browserStyle = styleName
+                    }
+                })
+                if (hasin === -1) {
+                    // is a css selector
+                    if (val + "" == "[object Object]") {
+                        let selector = next + key;
+                        styleElement[selector] = new StyleContent
+                        styleParse(val, styled, selector, styleElement)
+                    } else {
+                        console.error("illegal : not such style [" + key + "]  ");
+                    }
                 }
-            }
-            else { // is a style 
-                lastSelector[_key] = styleValueParse(val,styled)
+                else { // is a style 
+                    lastSelector[browserStyle] = styleValueParse(val, styled)
+                }
             }
         }
     }
     return styleElement;
 }
-function styleValueParse(val,styled){
-    if(val.startsWith("%")){
+
+function styleValueParse(val, styled) {
+    if (val.startsWith("%")) {
         let params = val.substring(1).match(/([a-zA-Z]\w*)\((.+)\)/);
         let fn = params[1];
-        let args =(( params[2]||"").split(",")||[]).map(function(el){
-            return el.replace(/^['"](.+)['"]$/,"$1")
+        let args = ((params[2] || "").split(",") || []).map(function (el) {
+            return el.replace(/^['"](.+)['"]$/, "$1")
         })
-        return styled[fn].apply(null,args);
+        return styled[fn].apply(null, args);
     }
     return val;
 }
-function composeStyle(start, styles,styled) {
+function composeStyle(start, styles, styled) {
     var cp = {};
     for (var part in styles) {
-        cp[start + "-" + part] = styleValueParse( styles[part],styled);
+        cp[start + "-" + part] = styleValueParse(styles[part], styled);
     }
     return cp;
 }

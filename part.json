@@ -3,6 +3,7 @@
     "basepath":"./ndom/",
     "path":[
         "define.js",
+        "browser.js",
         "tool.js",
         "wash.js",
         "loader.js",
