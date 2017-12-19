@@ -1,6 +1,6 @@
 # ndom
-a dom generator zen coding style like
-css function css prefix support !
+1. a dom generator zen coding style like
+2. css function and css browser prefix support !
 ## download 
 
 ```shell
