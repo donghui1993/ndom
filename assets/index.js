@@ -5,27 +5,11 @@
         content: "",
         footer: ""
     }
-
-    ndom(struct.container, {
-        styled:{
-            height:function(pre){
-                return  window.innerHeight  * parseInt(pre) /100 + "px";
-            }
-        },
-        style: {
-            'html,body':{
-                margin:0,
-                padding:0
-            },
-            body:{
-                minHeight:'100%'
-            },
-            li: {
-                $list: {
-                    style: "none"
-                }
-            },
-            '.item': {
+    var globalStyle = {
+        'html,body':{ margin:0,  padding:0 },
+        body:{  minHeight:'100%' },
+        li: {
+            '_.item': {
                 float: "left",
                 $padding:{
                     top:0,
@@ -33,19 +17,23 @@
                     bottom:0,
                     left:'10px'
                 }
+            },
+            $list: {
+                style: "none"
             }
         },
+    }
+    ndom(struct.container, {
+        styled:{
+            height:function(pre){  return  window.innerHeight  * parseInt(pre) /100 + "px"; }
+        },
+        style: globalStyle,
         parse: {
             '.header': {
-                style:{
-                    height: '%height(15)'
-                },
+                style:{  height: '%height(15)'  },
                 html: ndom(struct.header, {
                     parse: {
                         '.item': {
-                            style:{
-
-                            },
                             data: {
                                 item: ["专注", "专心", "专业", "专情"]
                             },
@@ -66,9 +54,26 @@
                     alignItems: 'center',
                     justifyContent: 'center'
                 },
-                text: "Hello N-Dom"
+                data:{
+                    text:"Hello",
+                    val:["你好","Hello","ハロー","привет","salve"]
+                },
+                i:0,
+                text: function(){
+                    var _this = this;
+                    var val   = _this.dataGet('val');
+                    var vt = _this.virtual;
+                    setTimeout(function(){
+                        _this.virtual.i++;
+                        _this.dataSet('text',val[vt.i%val.length]);
+                    },1000)
+                   return  _this.dataSet('text',val[vt.i%val.length]) + " N-DOM";
+                }
             },
             '.footer': {
+                data:{
+                    text:"拨云见日 -- N-DOM"
+                },
                 style:{
                     height: '%height(35)',
                     position:'absolute',
@@ -80,7 +85,9 @@
                     color:'white',
                     justifyContent: 'center'
                 },
-                text: "急于求成 -- N-DOM"
+                text: function(){
+                    return this.dataGet('text')
+                }
             }
         }
     }, document.body);
