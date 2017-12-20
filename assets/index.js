@@ -2,7 +2,7 @@
     var struct = {
         container: ".container>.header+.content+.footer",
         header: "ul.menu>li.item",
-        content: "",
+        content: "div",
         footer: ""
     }
     var globalStyle = {
@@ -22,6 +22,21 @@
                 style: "none"
             }
         },
+        '.content':{
+            '.text':{
+                "_:hover":{
+                    transform:'rotate(360deg)',
+                    transition:"transform 1s"
+                },
+                transition:"transform 1s",
+                width:'200px',
+                height:'200px',
+                display: "flex",
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+            }
+        }
     }
     ndom(struct.container, {
         styled:{
@@ -54,21 +69,29 @@
                     alignItems: 'center',
                     justifyContent: 'center'
                 },
-                data:{
-                    text:"Hello",
-                    val:["你好","Hello","ハロー","привет","salve"]
-                },
-                i:0,
-                text: function(){
-                    var _this = this;
-                    var val   = _this.dataGet('val');
-                    var vt = _this.virtual;
-                    setTimeout(function(){
-                        _this.virtual.i++;
-                        _this.dataSet('text',val[vt.i%val.length]);
-                    },1000)
-                   return  _this.dataSet('text',val[vt.i%val.length]) + " N-DOM";
-                }
+                
+                html: ndom(struct.content,{
+                    parse:{
+                        div:{
+                            classList:['text'],
+                            i:0,
+                            data:{
+                                text:"Hello",
+                                val:["你好","Hello","ハロー","привет","salve"]
+                            },
+                            text:function(){
+                                var _this = this;
+                                var val   = _this.dataGet('val');
+                                var vt = _this.virtual;
+                                setTimeout(function(){
+                                    _this.virtual.i++;
+                                    _this.dataSet('text',val[vt.i%val.length]);
+                                },1000)
+                               return  _this.dataSet('text',val[vt.i%val.length]) + " N-DOM";
+                            }
+                        }
+                    }
+                })
             },
             '.footer': {
                 data:{
@@ -91,6 +114,4 @@
             }
         }
     }, document.body);
-
-
 }()

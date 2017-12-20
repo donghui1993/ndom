@@ -745,12 +745,14 @@ function createDOM(virtualNode, index,styled) {
     let _html = virtualNode._html;
     if (_html) { // cut up
         if (typeof _html == "function") {
-            _html = _html.call(ele, data);
+            ele.innerHTML  = _html.call(ele, data);
+        }else if (_html instanceof Ndom) {
+            _html._ndom.doms.forEach(function(dom){
+                ele.appendChild(dom)
+            })
+        }else{
+            ele.innerHTML  = _html;
         }
-        if (_html instanceof Ndom) {
-            _html = _html.html();
-        }
-        ele.innerHTML = _html;
         result.noMore = true;
     }
     eventBind(virtualNode,ele);
