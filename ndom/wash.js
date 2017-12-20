@@ -31,6 +31,7 @@ function isIntactBrackets(ncode) {
 function basicWash(ncode) {
     return ncode
         .replace(/\s{2,}/g, "") // replace blank character to ""
+        .replace(/(.+)(\()/g,'$1>$2') // replace div() to  div>()
         .replace(/\((.+)\)>/g, "($1)+") //  replace ()> to ()+
         .replace(/\((.+)\)\((.+)\)/g, '($1)+($2)') // replace ()() to ()+()
         .replace(/\+\(([^\)]+)\)/g, "+$1") // replace  +(div) extra bracket  to  +div
