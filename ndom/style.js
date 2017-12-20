@@ -53,7 +53,7 @@ function styleParse(style, styled, parentname, styleElement) {
     if (style && Object.keys(style).length > 0) {
         for (var key in style) {
             let val = style[key];
-            let _key = key.replace(/([A-Z]+)/g, "-$1").toLocaleLowerCase();
+            
             if (key.startsWith('$')) {
                 // compose style like  $font:{ size:"",color:""}
                 Object.assign(lastSelector, composeStyle(key.substring(1), val, styled));
@@ -70,18 +70,20 @@ function styleParse(style, styled, parentname, styleElement) {
                 }
             }
             else {
-                let hasin = styleNames.indexOf(_key);
+                let _key = key.replace(/([A-Z]+)/g, "-$1").toLocaleLowerCase();
+                let hasin = styleNames.hasOwnProperty(_key);
+               
                 let browserStyle = "";
                 prefix.forEach(function (pre) {
                     let styleName = pre + _key;
-                    if (hasin === -1) {
-                        hasin = styleNames.indexOf(styleName);
+                    if (!hasin) {
+                        hasin = styleNames.hasOwnProperty(styleName);
                     }
                     if (browserStyle == "" && hasin > - 1) {
                         browserStyle = styleName
                     }
                 })
-                if (hasin === -1) {
+                if (!hasin) {
                     // is a css selector
                     if (val + "" == "[object Object]") {
                         let selector = next + key;
@@ -101,7 +103,8 @@ function styleParse(style, styled, parentname, styleElement) {
 }
 
 function styleValueParse(val, styled) {
-    if (val.startsWith("%")) {
+    
+    if (isString(val) && val.startsWith("%")) {
         let params = val.substring(1).match(/([a-zA-Z]\w*)\((.+)\)/);
         let fn = params[1];
         let args = ((params[2] || "").split(",") || []).map(function (el) {

@@ -6,8 +6,9 @@ function Ndom(ncode, options, parent) {
     let vitualNode = loader(wash(ncode), options);
     let mode = options.mode;
     this.id = uuid(32);
+    styleShow(this, options)
     if (!ndom.styleNames) {
-        ndom.styleNames = [].slice.call(getComputedStyle(document.body));
+        ndom.styleNames =getComputedStyle(document.body);
     }
     if (!parent) {
         parent = document.createElement('div');
@@ -32,12 +33,12 @@ function Ndom(ncode, options, parent) {
             return this;
         }
     }
-    treeParse(vitualNode, parent);
+    treeParse.call(this,vitualNode, parent);
     this._ndom = vitualNode;
     this.data = options.data;
     this._parent = parent;
     this.mode = mode;
-    styleShow(this, options)
+    
     return this;
 }
 Ndom.prototype.parent = function (dom) {

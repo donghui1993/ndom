@@ -1,9 +1,11 @@
+require('./style.js')
 /**
  * parse vitrualnode
  * @param {VirtualNode} virtualNode 
  * @param {HTMLElement} parent
  */
 function treeParse(virtualNode, parent) {
+    let _this = this;
     let loopSize = virtualNode.size;
     let children = virtualNode.children;
     let tag = virtualNode.tag;
@@ -20,7 +22,7 @@ function treeParse(virtualNode, parent) {
     }
     for (let i = 0; i < loopSize; i++) {
         if (tag) {
-            let result = createDOM(virtualNode, i);
+            let result = createDOM(virtualNode, i,_this.styled);
             let dom = result.dom;
             virtualNode.doms.push(dom);
             if (result.noMore) {
@@ -30,7 +32,7 @@ function treeParse(virtualNode, parent) {
         }
         if (children) {
             children.forEach(function (node) {
-                treeParse(node, parent);
+                treeParse.call(_this,node, parent);
             })
         }
     }
@@ -66,7 +68,7 @@ function getset(ele) {
  * Observer Data to update dom text or html
  * @param {Any} data 
  */
-function createDOM(virtualNode, index) {
+function createDOM(virtualNode, index,styled) {
     let ele = document.createElement(virtualNode.tag);
     let data = virtualNode.data;
     let parent = virtualNode.parent;
@@ -106,7 +108,17 @@ function createDOM(virtualNode, index) {
     if(virtualNode.style){
         let style = virtualNode.style;
         for(let key in style){
-            ele.style[key.replace(/([A-Z]+)/g,"-$1").toLocaleLowerCase()] = style[key];
+            let stylekey = key.replace(/\-([a-z])/g,function(e){ // some-define --> someDefine
+               return e.substring(1).toUpperCase();
+            });
+            if(ele.style.hasOwnProperty(stylekey)){
+                ele.style[stylekey] = styleValueParse(style[key], styled);
+                if(ele.style[stylekey] === ""){
+                    console.log('%c[STYLE-VALUE-WARN] : set style [ ' + stylekey + " : " + style[key] +" ] not success, because < " + style[key] + " > is  a invalid value" ,"color:orange")
+                }
+            }else{
+                console.log('%c[STYLE-NAME-WARN]: set style [ ' + stylekey + " : " + style[key] +" ] not success, because < " + key  + " > is a invalid stylename" ,"color:orange")
+            }
         }
     }
     let _html = virtualNode._html;

@@ -28,6 +28,23 @@ Array.prototype.nreduce = function (fn) {
     }
     return this;
 }
+
+function isString(str){
+    return typeof str === 'string'
+}
+function isFunc(fn){
+    return typeof fn === 'function';
+}
+function isBool(bool){
+    return typeof bool === 'boolean';
+}
+function isEmptyObject(obj){
+    return !isString(obj)  &&
+           !isBool(obj) &&
+           !isFunc(obj) &&
+           Object.keys(obj).length === 0
+}
+
 var basestr = "0123456789qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM";
 
 function uuid(length,prefix){
@@ -94,29 +111,27 @@ var browser={    versions:function(){
             app = navigator.appVersion;
         return {
             trident: u.indexOf('Trident') > -1, //IE内核
-            presto: u.indexOf('Presto') > -1, //opera内核
-            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+            //presto: u.indexOf('Presto') > -1, //opera内核
+            //webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
             gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1,//火狐内核
-            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
-            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
-            android: u.indexOf('Android') > -1 || u.indexOf('Adr') > -1, //android终端
-            iPhone: u.indexOf('iPhone') > -1 , //是否为iPhone或者QQHD浏览器
-            iPad: u.indexOf('iPad') > -1, //是否iPad
-           // webApp: u.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
-            weixin: u.indexOf('MicroMessenger') > -1, //是否微信
-            qq: u.match(/\sQQ/i) == " qq" //是否QQ
+            //mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+            //ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+            //android: u.indexOf('Android') > -1 || u.indexOf('Adr') > -1, //android终端
+            //iPhone: u.indexOf('iPhone') > -1 , //是否为iPhone或者QQHD浏览器
+            //iPad: u.indexOf('iPad') > -1, //是否iPad
+            //webApp: u.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
+            //weixin: u.indexOf('MicroMessenger') > -1, //是否微信
+            //qq: u.match(/\sQQ/i) == " qq" //是否QQ
         };
     }(),
     language:(navigator.browserLanguage || navigator.language).toLowerCase()
 }
 var prefix = function stylePrefix(){
-    let prefix = [""];
+    let prefix = ['','-webkit-'];
     if(browser.versions.gecko){
          prefix.push('-moz-');
-    }else if(browser.versions.webKit){
-         prefix.push('-webkit-');
-    }else if(browser.versions.trident){
-        prefix.push('-ms-','-webkit-')
+    }else  if(browser.versions.trident){
+        prefix.push('-ms-')
     }
     return prefix;
 }();
@@ -605,11 +620,13 @@ optionFiller.copy = function (virtualnode, val) {
         }
     })
 }
-/** * parse vitrualnode
+/**
+ * parse vitrualnode
  * @param {VirtualNode} virtualNode 
  * @param {HTMLElement} parent
  */
 function treeParse(virtualNode, parent) {
+    let _this = this;
     let loopSize = virtualNode.size;
     let children = virtualNode.children;
     let tag = virtualNode.tag;
@@ -626,7 +643,7 @@ function treeParse(virtualNode, parent) {
     }
     for (let i = 0; i < loopSize; i++) {
         if (tag) {
-            let result = createDOM(virtualNode, i);
+            let result = createDOM(virtualNode, i,_this.styled);
             let dom = result.dom;
             virtualNode.doms.push(dom);
             if (result.noMore) {
@@ -636,7 +653,7 @@ function treeParse(virtualNode, parent) {
         }
         if (children) {
             children.forEach(function (node) {
-                treeParse(node, parent);
+                treeParse.call(_this,node, parent);
             })
         }
     }
@@ -672,7 +689,7 @@ function getset(ele) {
  * Observer Data to update dom text or html
  * @param {Any} data 
  */
-function createDOM(virtualNode, index) {
+function createDOM(virtualNode, index,styled) {
     let ele = document.createElement(virtualNode.tag);
     let data = virtualNode.data;
     let parent = virtualNode.parent;
@@ -712,7 +729,17 @@ function createDOM(virtualNode, index) {
     if(virtualNode.style){
         let style = virtualNode.style;
         for(let key in style){
-            ele.style[key.replace(/([A-Z]+)/g,"-$1").toLocaleLowerCase()] = style[key];
+            let stylekey = key.replace(/\-([a-z])/g,function(e){ // some-define --> someDefine
+               return e.substring(1).toUpperCase();
+            });
+            if(ele.style.hasOwnProperty(stylekey)){
+                ele.style[stylekey] = styleValueParse(style[key], styled);
+                if(ele.style[stylekey] === ""){
+                    console.log('%c[STYLE-VALUE-WARN] : set style [ ' + stylekey + " : " + style[key] +" ] not success, because < " + style[key] + " > is  a invalid value" ,"color:orange")
+                }
+            }else{
+                console.log('%c[STYLE-NAME-WARN]: set style [ ' + stylekey + " : " + style[key] +" ] not success, because < " + key  + " > is a invalid stylename" ,"color:orange")
+            }
         }
     }
     let _html = virtualNode._html;
@@ -792,7 +819,7 @@ function styleParse(style, styled, parentname, styleElement) {
     if (style && Object.keys(style).length > 0) {
         for (var key in style) {
             let val = style[key];
-            let _key = key.replace(/([A-Z]+)/g, "-$1").toLocaleLowerCase();
+            
             if (key.startsWith('$')) {
                 // compose style like  $font:{ size:"",color:""}
                 Object.assign(lastSelector, composeStyle(key.substring(1), val, styled));
@@ -809,18 +836,20 @@ function styleParse(style, styled, parentname, styleElement) {
                 }
             }
             else {
-                let hasin = styleNames.indexOf(_key);
+                let _key = key.replace(/([A-Z]+)/g, "-$1").toLocaleLowerCase();
+                let hasin = styleNames.hasOwnProperty(_key);
+               
                 let browserStyle = "";
                 prefix.forEach(function (pre) {
                     let styleName = pre + _key;
-                    if (hasin === -1) {
-                        hasin = styleNames.indexOf(styleName);
+                    if (!hasin) {
+                        hasin = styleNames.hasOwnProperty(styleName);
                     }
                     if (browserStyle == "" && hasin > - 1) {
                         browserStyle = styleName
                     }
                 })
-                if (hasin === -1) {
+                if (!hasin) {
                     // is a css selector
                     if (val + "" == "[object Object]") {
                         let selector = next + key;
@@ -840,7 +869,8 @@ function styleParse(style, styled, parentname, styleElement) {
 }
 
 function styleValueParse(val, styled) {
-    if (val.startsWith("%")) {
+    
+    if (isString(val) && val.startsWith("%")) {
         let params = val.substring(1).match(/([a-zA-Z]\w*)\((.+)\)/);
         let fn = params[1];
         let args = ((params[2] || "").split(",") || []).map(function (el) {
@@ -868,8 +898,9 @@ function Ndom(ncode, options, parent) {
     let vitualNode = loader(wash(ncode), options);
     let mode = options.mode;
     this.id = uuid(32);
+    styleShow(this, options)
     if (!ndom.styleNames) {
-        ndom.styleNames = [].slice.call(getComputedStyle(document.body));
+        ndom.styleNames =getComputedStyle(document.body);
     }
     if (!parent) {
         parent = document.createElement('div');
@@ -894,12 +925,12 @@ function Ndom(ncode, options, parent) {
             return this;
         }
     }
-    treeParse(vitualNode, parent);
+    treeParse.call(this,vitualNode, parent);
     this._ndom = vitualNode;
     this.data = options.data;
     this._parent = parent;
     this.mode = mode;
-    styleShow(this, options)
+    
     return this;
 }
 Ndom.prototype.parent = function (dom) {
