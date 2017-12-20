@@ -771,10 +771,12 @@ function styleShow(ndom, options) {
             }
         }
     }
-    let styleElement = document.createElement('style');
-    styleElement.setAttribute('id', ndom.id)
-    document.querySelector("head").appendChild(styleElement);
-    styleElement.innerHTML = arr.join("\n")
+    if(arr.length>0){
+        let styleElement = document.createElement('style');
+        styleElement.setAttribute('id', ndom.id)
+        document.querySelector("head").appendChild(styleElement);
+        styleElement.innerHTML = arr.join("\n")
+    }
 }
 
 function styleParse(style, styled, parentname, styleElement) {
