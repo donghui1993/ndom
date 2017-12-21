@@ -1,3 +1,4 @@
+
 !function () {
     var struct = {
         container: ".container>.header+.content+.footer",

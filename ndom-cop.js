@@ -110,7 +110,11 @@ function VirtualNode() {
         }
     })
 }
-window.onerror = function errors(message,atfile,linenumber,columnnumber,error){    document.write(error.name+error.message+"@"+atfile +":"+ linenumber + ":"+columnnumber)
+window.onerror = function errors(message,atfile,linenumber,columnnumber,error){    if(error){
+        document.write(error.name+error.message+"@"+atfile +":"+ linenumber + ":"+columnnumber)
+    }else{
+        document.writeln([message,atfile,linenumber,columnnumber,error])
+    }
 }
 console.log = (function(oriLogFunc){
     return function()
