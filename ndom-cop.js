@@ -1,4 +1,5 @@
 !function(factory) {  if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {   var target = module['exports'] || exports;  factory(target);  } else if (typeof define === 'function' && define['amd']) {   define(['exports'], factory);  } else { factory(window);  }  }(function(exp){  exp = typeof exp !== 'undefined' ? exp : {};
+  try{
 var SAME_LEVEL = /\+/;// sibling
 var SIBLING = '+';
 // child
@@ -1014,4 +1015,4 @@ function ndom(ncode, options, parent) {
     }
     return new Ndom(ncode, options, parent);
 }
-exp.ndom = ndom;});
+exp.ndom = ndom; } catch(e){ document.writeln(JSON.stringify(e)) }});
