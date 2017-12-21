@@ -28,6 +28,23 @@ Array.prototype.nreduce = function (fn) {
     }
     return this;
 }
+
+function isString(str){
+    return typeof str === 'string'
+}
+function isFunc(fn){
+    return typeof fn === 'function';
+}
+function isBool(bool){
+    return typeof bool === 'boolean';
+}
+function isEmptyObject(obj){
+    return !isString(obj)  &&
+           !isBool(obj) &&
+           !isFunc(obj) &&
+           Object.keys(obj).length === 0
+}
+
 var basestr = "0123456789qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM";
 
 function uuid(length,prefix){
