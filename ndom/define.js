@@ -14,6 +14,10 @@ Array.prototype.isEmpty = function () {
     return this.length === 0;
 }
 
+String.prototype.startsWith = function(str){
+    return this.indexOf(str) === 0;
+}
+
 /**
  * if Array is empty not execute reduce
  * if array length = 1 ,execute fn
