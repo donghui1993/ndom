@@ -3,6 +3,7 @@ require("./style");
 require("./domparse");
 
 function Ndom(ncode, options, parent) {
+    styleShow(this, options)
     let vitualNode = loader(wash(ncode), options);
     let mode = options.mode;
     this.id = uuid(32);
@@ -37,7 +38,6 @@ function Ndom(ncode, options, parent) {
     this.data = options.data;
     this._parent = parent;
     this.mode = mode;
-    styleShow(this, options)
     return this;
 }
 Ndom.prototype.parent = function (dom) {
