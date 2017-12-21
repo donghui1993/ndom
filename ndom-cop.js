@@ -14,6 +14,10 @@ Array.prototype.isEmpty = function () {
     return this.length === 0;
 }
 
+String.prototype.startsWith = function(str){
+    return this.indexOf(str) === 0;
+}
+
 /**
  * if Array is empty not execute reduce
  * if array length = 1 ,execute fn
@@ -897,6 +901,7 @@ function styleMixin(pre, current) {
 }
 
 function Ndom(ncode, options, parent) {
+
     let vitualNode = loader(wash(ncode), options);
     let mode = options.mode;
     this.id = uuid(32);
@@ -932,7 +937,6 @@ function Ndom(ncode, options, parent) {
     this.data = options.data;
     this._parent = parent;
     this.mode = mode;
-    
     return this;
 }
 Ndom.prototype.parent = function (dom) {
