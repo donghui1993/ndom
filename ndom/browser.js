@@ -20,7 +20,7 @@ var browser={
     language:(navigator.browserLanguage || navigator.language).toLowerCase()
 }
 var prefix = function stylePrefix(){
-    let prefix = ['','-webkit-'];
+    var prefix = ['','-webkit-'];
     if(browser.versions.gecko){
          prefix.push('-moz-');
     }else  if(browser.versions.trident){

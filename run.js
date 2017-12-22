@@ -15,15 +15,15 @@ function watch(){
     });
 }
 function build(){
-    writeFileSync("!function(factory) {  if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {   var target = module['exports'] || exports;  factory(target);  } else if (typeof define === 'function' && define['amd']) {   define(['exports'], factory);  } else { factory(window);  }  }(function(exp){  exp = typeof exp !== 'undefined' ? exp : {};\r\n")
-    appendFileSync('  try{')
+    writeFileSync("");
+   // writeFileSync("!function(factory) {  if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {   var target = module['exports'] || exports;  factory(target);  } else if (typeof define === 'function' && define['amd']) {   define(['exports'], factory);  } else { factory(window);  }  }(function(exp){  exp = typeof exp !== 'undefined' ? exp : {};\r\n")
     part.path.forEach(filepath => {
         let file = fs.readFileSync(part.basepath+filepath,{encoding:"utf-8"})
 
         appendFileSync(file.replace(/require\(.+\)(;)?/g,"").replace(/(\r\n)+/,""));
     });
 
-    appendFileSync("exp.ndom = ndom; } catch(e){ document.writeln(JSON.stringify(e)) }});")
+   // appendFileSync("exp.ndom = ndom; });")
     var now = new Date;
     console.log("["+now.toLocaleDateString() +" "+ now.toLocaleTimeString() + '] build done')
 }

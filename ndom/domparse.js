@@ -5,10 +5,10 @@ require('./style.js')
  * @param {HTMLElement} parent
  */
 function treeParse(virtualNode, parent) {
-    let _this = this;
-    let loopSize = virtualNode.size;
-    let children = virtualNode.children;
-    let tag = virtualNode.tag;
+    var _this = this;
+    var loopSize = virtualNode.size;
+    var children = virtualNode.children;
+    var tag = virtualNode.tag;
 
     virtualNode.parent = parent;
     if (!virtualNode.doms) {
@@ -20,10 +20,10 @@ function treeParse(virtualNode, parent) {
     if (isNaN(loopSize)) {
         loopSize = 1;
     }
-    for (let i = 0; i < loopSize; i++) {
+    for (var i = 0; i < loopSize; i++) {
         if (tag) {
-            let result = createDOM(virtualNode, i,_this.styled);
-            let dom = result.dom;
+            var result = createDOM(virtualNode, i,_this.styled);
+            var dom = result.dom;
             virtualNode.doms.push(dom);
             if (result.noMore) {
                 continue;
@@ -45,11 +45,11 @@ function getset(ele) {
     }
     ele.dataSet = function (name, val) {
         if (this.virtual.data) {
-            let caller = arguments.callee.caller;
+            var caller = arguments.callee.caller;
             this.virtual.data[name] = val;
             if (caller == this.virtual._html || caller == this.virtual.text) {
             } else {
-                let exec = this.virtual._html || this.virtual.text;
+                var exec = this.virtual._html || this.virtual.text;
                 if (this.virtual._html) {
                     this.innerHTML = exec.call(this)
                 } else if (this.virtual.text) {
@@ -69,20 +69,20 @@ function getset(ele) {
  * @param {Any} data 
  */
 function createDOM(virtualNode, index,styled) {
-    let ele = document.createElement(virtualNode.tag);
-    let data = virtualNode.data;
-    let parent = virtualNode.parent;
-    let result = { dom: ele, noMore: false }
+    var ele = document.createElement(virtualNode.tag);
+    var data = virtualNode.data;
+    var parent = virtualNode.parent;
+    var result = { dom: ele, noMore: false }
     ele.index = index;
     parent.appendChild(ele);
     ele.virtual = virtualNode;
     Object.defineProperty(ele,'parent',{
-        get(){
+        get:function(){
             return this.virtual.parent;
         }
-    })
+    });
     getset(ele);
-    let text = virtualNode.text;
+    var text = virtualNode.text;
     if (text) { // cut up
         if (typeof text == "function") {
             text = text.call(ele, data);
@@ -100,15 +100,15 @@ function createDOM(virtualNode, index,styled) {
         ele.classList = virtualNode.classList.join(" ");
     }
     if (virtualNode.attributes) {
-        let attrs = virtualNode.attributes;
-        for (let key in attrs) {
+        var attrs = virtualNode.attributes;
+        for (var key in attrs) {
             ele.setAttribute(key, attrs[key])
         }
     }
     if(virtualNode.style){
-        let style = virtualNode.style;
-        for(let key in style){
-            let stylekey = key.replace(/\-([a-z])/g,function(e){ // some-define --> someDefine
+        var style = virtualNode.style;
+        for(var key in style){
+            var stylekey = key.replace(/\-([a-z])/g,function(e){ // some-define --> someDefine
                return e.substring(1).toUpperCase();
             });
             if(ele.style.hasOwnProperty(stylekey)){
@@ -121,7 +121,7 @@ function createDOM(virtualNode, index,styled) {
             }
         }
     }
-    let _html = virtualNode._html;
+    var _html = virtualNode._html;
     if (_html) { // cut up
         if (typeof _html == "function") {
             ele.innerHTML  = _html.call(ele, data);
@@ -138,7 +138,7 @@ function createDOM(virtualNode, index,styled) {
     return result;
 }
 function eventBind(virtualNode,ele){
-    let keys = Object.keys(virtualNode)||[];
+    var keys = Object.keys(virtualNode)||[];
     keys.forEach(function(eventName){
         if(eventName.startsWith("$")){
             ele.addEventListener(eventName.substring(1),virtualNode[eventName],{useCapture:false})

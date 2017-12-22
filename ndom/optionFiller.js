@@ -11,7 +11,7 @@ function optionFiller(virtualnode, parse) {
     keys.forEach(function (key) {
         // find from classList,id,tag,attributes
         if (virtualnode.classList) {
-            let isParse = false;
+            var isParse = false;
             virtualnode.classList.forEach(function (clazz) {
                 if ("." + clazz == key) {
                     optionFiller.copy(virtualnode, parse[key])
@@ -32,7 +32,7 @@ function optionFiller(virtualnode, parse) {
 
         if (virtualnode.attributes) {
             Object.keys(virtualnode.attributes).forEach(function (attrkey) {
-                let kv = "[" + attrkey + "=" + virtualnode.attributes[attrkey] + "]"
+                var kv = "[" + attrkey + "=" + virtualnode.attributes[attrkey] + "]"
                 if (key == kv) {
                     optionFiller.copy(virtualnode, parse[key])
                 }
@@ -43,13 +43,13 @@ function optionFiller(virtualnode, parse) {
     })
 }
 optionFiller.copy = function (virtualnode, val) {
-    let valkeys = Object.keys(val);
+    var valkeys = Object.keys(val);
     if (!val || !Object.keys(val).length) {
         return
     }
     valkeys.forEach(function (key) {
-        let value = val[key];
-        let preValue = virtualnode[key];
+        var value = val[key];
+        var preValue = virtualnode[key];
         if (key == "html") {
             virtualnode._html = value;
         }

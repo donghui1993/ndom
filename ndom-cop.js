@@ -1,121 +1,9 @@
-!function(factory) {  if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {   var target = module['exports'] || exports;  factory(target);  } else if (typeof define === 'function' && define['amd']) {   define(['exports'], factory);  } else { factory(window);  }  }(function(exp){  exp = typeof exp !== 'undefined' ? exp : {};
-  try{
-var SAME_LEVEL = /\+/;// sibling
-var SIBLING = '+';
-// child
-var CHILD = '>';
-// left bracket of '( )'
-var COMBIN = '(';
-// without any combine or child relationship
-var SIGN_CODE = /[\(>\+]/;
-/**
- *  is Empty of Array
- */
-Array.prototype.isEmpty = function () {
-    return this.length === 0;
-}
-
-String.prototype.startsWith = function(str){
-    return this.indexOf(str) === 0;
-}
-
-/**
- * if Array is empty not execute reduce
- * if array length = 1 ,execute fn
- * @param {Function} fn 
- */
-Array.prototype.nreduce = function (fn) {
-    if (!this.isEmpty()) {
-        if (this.length == 1) {
-            return fn(this[0]);
-        }
-        return this.reduce(fn);
-    }
-    return this;
-}
-
-function isString(str){
-    return typeof str === 'string'
-}
-function isFunc(fn){
-    return typeof fn === 'function';
-}
-function isBool(bool){
-    return typeof bool === 'boolean';
-}
-function isEmptyObject(obj){
-    return !isString(obj)  &&
-           !isBool(obj) &&
-           !isFunc(obj) &&
-           Object.keys(obj).length === 0
-}
-
-var basestr = "0123456789qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM";
-
-function uuid(length,prefix){
-  let str = "";
-  if(prefix === void 0){
-    prefix ="";
-  }
-  length -= prefix.length;
-  while(str.length<length){
-    str += basestr[ parseInt( Math.random()*basestr.length)]
-  }
-  return prefix + str;
-}
-/**
- * define virtual node
- */
-function VirtualNode() {
-    this.id;
-    this.attributes;
-    this.classList;
-    this.tag;
-    this.text;
-    this.doms;
-    this.size = 1;
-    this.children;
-    this.parent;
-    Object.defineProperty(this, 'html', {
-        get: function () {
-            let html;
-            if (this.parent && this.parent.isVirtual) {
-                return this.parent.innerHTML;
-            }
-            if (this.doms) {
-                html = this.doms.nreduce(function (dom, nextdom) {
-                    if (nextdom) {
-                        if (typeof dom == "string") {
-                            return dom + nextdom.outerHTML;
-                        }
-                        return dom.outerHTML + nextdom.outerHTML;
-                    }
-                    return dom.outerHTML
-                })
-            } else if (this.children) {
-                html = this.children.nreduce(function (dom, nextdom) {
-                    if (nextdom) {
-                        if (typeof dom == "string") {
-                            return dom + nextdom.html;
-                        }
-                        return dom.html + nextdom.html;
-                    }
-                    if (dom instanceof Array) {
-                        return dom[0].html;
-                    } else {
-                        return dom.html
-                    }
-                })
-            }
-            return html;
-        }
-    })
-}
 window.onerror = function errors(message,atfile,linenumber,columnnumber,error){    if(error){
-        document.write(error.name+error.message+"@"+atfile +":"+ linenumber + ":"+columnnumber)
+        document.write(error.name+" : "+error.message+"\r\n@"+atfile +":"+ linenumber + ":"+columnnumber)
     }else{
         document.writeln([message,atfile,linenumber,columnnumber,error])
-    }
+	}
+	
 }
 console.log = (function(oriLogFunc){
     return function()
@@ -154,6 +42,155 @@ console.error = (function(oriLogFunc){
         document.body.innerText = "ERROR : " +str +'\r\n'+ strs;
     }
 })(console.error);
+/** * polyfill for unsupport browser
+ */
+function polyfill(polyfillMapping) {
+    for (var target in polyfillMapping) {
+        if (eval(target) === void 0) {
+            eval(target+'='+polyfillMapping[target].toString())
+        }
+    }
+}
+var polly = {
+    "Object.assign": function (a) {
+        if (target === void 0 || target === null) {
+            throw new TypeError('Cannot convert undefined or null to object');
+        }
+        var output = Object(a);
+        for (var index = 1; index < arguments.length; i++) {
+            var source = arguments[index];
+            if (source !== void 0 && source !== null) {
+                for (var nextKey in source) {
+                    if (source.hasOwnProperty(nextKey)) {
+                        output[nextKey] = source[nextKey];
+                    }
+                }
+            }
+        }
+        return output;
+    },
+    "String.prototype.startsWith":function(str){
+        return this.indexOf(str) === 0;
+    }
+}
+polyfill(polly)
+var SAME_LEVEL = /\+/;// sibling
+var SIBLING = '+';
+// child
+var CHILD = '>';
+// left bracket of '( )'
+var COMBIN = '(';
+// without any combine or child relationship
+var SIGN_CODE = /[\(>\+]/;
+/**
+ *  is Empty of Array
+ */
+Array.prototype.isEmpty = function () {
+    return this.length === 0;
+}
+/**
+ * if Array is empty not execute reduce
+ * if array length = 1 ,execute fn
+ * @param {Function} fn 
+ */
+Array.prototype.nreduce = function (fn) {
+    if (!this.isEmpty()) {
+        if (this.length == 1) {
+            return fn(this[0]);
+        }
+        return this.reduce(fn);
+    }
+    return this;
+}
+
+function isString(str) {
+    return typeof str === 'string'
+}
+function isFunc(fn) {
+    return typeof fn === 'function';
+}
+function isBool(bool) {
+    return typeof bool === 'boolean';
+}
+function isArray(arr) {
+    return Object.prototype.toString.call(arr) === '[object Array]';
+}
+function isTruth(bool){
+    return isBool(bool) && bool;
+}
+function isEmptyObject(obj) {
+    return !isString(obj) &&
+        !isBool(obj) &&
+        !isFunc(obj) &&
+        !isArray(arr) &&
+        Object.keys(obj).length === 0
+}
+function array2Map(arr) {
+    var obj = {};
+    obj[arr[0]] = arr[1];
+    return obj;
+}
+var basestr = "0123456789qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM";
+
+function uuid(length, prefix) {
+    var str = "";
+    if (prefix === void 0) {
+        prefix = "";
+    }
+    length -= prefix.length;
+    while (str.length < length) {
+        str += basestr[parseInt(Math.random() * basestr.length)]
+    }
+    return prefix + str;
+}
+/**
+ * define virtual node
+ */
+function VirtualNode() {
+    this.id;
+    this.attributes;
+    this.classList;
+    this.tag;
+    this.text;
+    this.doms;
+    this.size = 1;
+    this.children;
+    this.parent;
+    Object.defineProperty(this, 'html', {
+        get: function () {
+            var html;
+            if (this.parent && this.parent.isVirtual) {
+                return this.parent.innerHTML;
+            }
+            if (this.doms) {
+                html = this.doms.nreduce(function (dom, nextdom) {
+                    if (nextdom) {
+                        if (typeof dom == "string") {
+                            return dom + nextdom.outerHTML;
+                        }
+                        return dom.outerHTML + nextdom.outerHTML;
+                    }
+                    return dom.outerHTML
+                })
+            } else if (this.children) {
+                html = this.children.nreduce(function (dom, nextdom) {
+                    if (nextdom) {
+                        if (typeof dom == "string") {
+                            return dom + nextdom.html;
+                        }
+                        return dom.html + nextdom.html;
+                    }
+                    if (isArray(dom)) {
+                        return dom[0].html;
+                    } else {
+                        return dom.html
+                    }
+                })
+            }
+            return html;
+        }
+    })
+}
 var browser={    versions:function(){
         var u = navigator.userAgent,
             app = navigator.appVersion;
@@ -175,7 +212,7 @@ var browser={    versions:function(){
     language:(navigator.browserLanguage || navigator.language).toLowerCase()
 }
 var prefix = function stylePrefix(){
-    let prefix = ['','-webkit-'];
+    var prefix = ['','-webkit-'];
     if(browser.versions.gecko){
          prefix.push('-moz-');
     }else  if(browser.versions.trident){
@@ -183,15 +220,15 @@ var prefix = function stylePrefix(){
     }
     return prefix;
 }();
-function notInText(code) {    let sqb = findEachCharIndexOf(code, /\[/); // find index of [ ]
-    let lb = findEachCharIndexOf(code, /\{/); // find  index of { }
+function notInText(code) {    var sqb = findEachCharIndexOf(code, /\[/); // find index of [ ]
+    var lb = findEachCharIndexOf(code, /\{/); // find  index of { }
     // replace all of between [] or {} text to ""
     sqb.forEach(function (from) {
-        let to = findEndBracket(code, from, "[", "]")
+        var to = findEndBracket(code, from, "[", "]")
         code = code.replace(code.substring(from, to + 1), "");
     })
     lb.forEach(function (from) {
-        let to = findEndBracket(code, from, "{", "}")
+        var to = findEndBracket(code, from, "{", "}")
         code = code.replace(code.substring(from, to + 1), "");
     })
     // find if it is not in new code
@@ -227,7 +264,7 @@ function findEndBracket(ncode, from, left, right) {
     if (typeof from != 'number') {
         from = 0;
     }
-    let len = ncode.length,
+    var len = ncode.length,
         counter = 0; // counter brackets
     for (; from < len; from++) {
         if ((counter += getBracket(ncode[from], left, right)) <= 0) {
@@ -243,12 +280,12 @@ function findEndBracket(ncode, from, left, right) {
  * @param {Array<Number>} indexarr
  */
 function findEachCharIndexOf(str, reg, indexarr) {
-    let arr = str.match(reg); //match regexp of char
+    var arr = str.match(reg); //match regexp of char
     if (arr) {
         if (!indexarr) {
             indexarr = []
         }
-        let lastest = indexarr[indexarr.length - 1];
+        var lastest = indexarr[indexarr.length - 1];
         lastest = lastest == void 0 ? 0 : lastest + 1;
         indexarr.push(arr.index + lastest);
         return findEachCharIndexOf(str.slice(arr.index + 1), reg, indexarr);
@@ -260,7 +297,7 @@ function findEachCharIndexOf(str, reg, indexarr) {
  * @param {String} ncode 
  */
 function wash(ncode) {
-    let brackets = isIntactBrackets(ncode);
+    var brackets = isIntactBrackets(ncode);
     if (brackets.isLost) {
         throw Error("'(' ')'  looks not exactly matched, left size is " + brackets.left + " but right size is " + brackets.right)
     }
@@ -273,8 +310,8 @@ function wash(ncode) {
  * @param {String} ncode 
  */
 function isIntactBrackets(ncode) {
-    let left = (ncode.match(/\(/g) || []).length;
-    let right = (ncode.match(/\)/g) || []).length;
+    var left = (ncode.match(/\(/g) || []).length;
+    var right = (ncode.match(/\)/g) || []).length;
     return {
         left: left,
         right: right,
@@ -300,11 +337,11 @@ function basicWash(ncode) {
  */
 function startAtBracket(ncode) {
     if (ncode.startsWith('(')) {
-        let end = findEndBracket(ncode);
+        var end = findEndBracket(ncode);
         if (ncode[end + 1] == "+") {// if next of end bracket is + it could be likely ( )+
             return ncode;
         }
-        let str = ncode.substring(1, end); // between ( and  )
+        var str = ncode.substring(1, end); // between ( and  )
         if (end != ncode.length - 1) { // not the end
             str += ncode.substr(end + 1);
             ncode = str;
@@ -316,13 +353,13 @@ function startAtBracket(ncode) {
     return ncode;
 }
 function moreBracket(ncode) {
-    let match = /\({2,}/.exec(ncode);
+    var match = /\({2,}/.exec(ncode);
     if (match) {
-        let len = match[0].length;
-        let from = match.index;
-        let end = findEndBracket(ncode, from);
+        var len = match[0].length;
+        var from = match.index;
+        var end = findEndBracket(ncode, from);
         if (end) {
-            let str = "(" + ncode.substring(from + len, end - len + 1) + ")" + ncode.substring(end + 1);
+            var str = "(" + ncode.substring(from + len, end - len + 1) + ")" + ncode.substring(end + 1);
             if (from != 0) {
                 str = ncode.substring(0, from) + str
             }
@@ -340,7 +377,7 @@ function loader(ncode, options, virtualnode) {
     if (!virtualnode) {
         virtualnode = new VirtualNode;
     }
-    let siblings = sameLevelSeparator(ncode);
+    var siblings = sameLevelSeparator(ncode);
     if (siblings.length == 1) {
         return spareparts(siblings[0], options, virtualnode);
     } else {
@@ -361,7 +398,7 @@ function loader(ncode, options, virtualnode) {
  */
 function spareparts(simplecode, options, virtualnode) {
     if (simplecode.startsWith(COMBIN)) { // (somecode)
-        let endBracketIndex = findEndBracket(simplecode, 0);
+        var endBracketIndex = findEndBracket(simplecode, 0);
         if (simplecode[endBracketIndex + 1] == '*') { // is size symbol
             virtualnode.size = parseInt(simplecode.substring(endBracketIndex + 2)) || 1; // skip of '*' 
             simplecode = simplecode.substring(0, endBracketIndex + 1);
@@ -381,11 +418,11 @@ function spareparts(simplecode, options, virtualnode) {
         optionFiller(virtualnode, options.parse);
     } else {
         // main code split from here
-        let len = simplecode.length,
+        var len = simplecode.length,
             index = 0,
             cursor = 0;
         for (; index < len; index++) {
-            let char = simplecode[index];
+            var char = simplecode[index];
             switch (char) {
                 case CHILD:
                     // left part  is parent and analize it 
@@ -399,7 +436,7 @@ function spareparts(simplecode, options, virtualnode) {
                     return virtualnode;
                 case COMBIN:
                     // find end bracket of COMBIN
-                    let end = findEndBracket(simplecode, index);
+                    var end = findEndBracket(simplecode, index);
                     virtualnode.children.push(loader(simplecode.substring(cursor, end), options));
                     cursor = end + 1; // skip end bracket
                     index = end; // 
@@ -420,37 +457,37 @@ function sameLevelSeparator(ncode) {
     if (!SAME_LEVEL.test(ncode)) {
         siblings.push(ncode)
     } else {
-        let len = ncode.length,
+        var len = ncode.length,
             cursor = 0;
-        for (let i = 0; i < len; i++) {
-            let char = ncode[i];
+        for (var i = 0; i < len; i++) {
+            var char = ncode[i];
             if (char == "{") {
                 i = findEndBracket(ncode, i, "{", "}");
                 continue;
             }
             if (char == SIBLING) {
-                let _sibling = ncode.substring(cursor, i);
+                var _sibling = ncode.substring(cursor, i);
                 cursor = i; // move cursor to i;
                 cursor++; // and jump over a symbol of sibling 
                 (_sibling != SIBLING) && siblings.push(_sibling); // if _sibling not '+' ,put it to siblings 
             } else if (char == CHILD) {
-                let _sibling = ncode.substring(cursor, len); // substring to the end
+                var _sibling = ncode.substring(cursor, len); // substring to the end
                 cursor = len; // cursor is ended
                 siblings.push(_sibling);
                 break; // end for
             } else if (char == COMBIN) {
-                let endBracketIndex = findEndBracket(ncode, i);
-                let from = cursor; // from (
-                let to = endBracketIndex; // to )
-                let cos = 0;
+                var endBracketIndex = findEndBracket(ncode, i);
+                var from = cursor; // from (
+                var to = endBracketIndex; // to )
+                var cos = 0;
                 if (ncode[endBracketIndex + 1] == '*') {
-                    let preNumber = ncode.substring(endBracketIndex + 2).match(/^\d+/g)[0];
+                    var preNumber = ncode.substring(endBracketIndex + 2).match(/^\d+/g)[0];
                     to += (preNumber.length + 2); // to *number 
                 } else {
                     from = cursor + 1 // from ( of next
                     cos += 1;
                 }
-                let _sibling = ncode.substring(from, to); // take between '(' and ')' ;
+                var _sibling = ncode.substring(from, to); // take between '(' and ')' ;
                 siblings.push(_sibling);
                 i = to + cos; // over a ')'
                 cursor = i + 1;// over ')'
@@ -475,7 +512,7 @@ function analyzer(simplecode, virtualnode) {
         [/#\w+/, "id"]
     ].forEach(function (piter) {
         if (piter[0].test(simplecode)) {
-            let cp = analyzer[piter[1]](simplecode);
+            var cp = analyzer[piter[1]](simplecode);
             simplecode = cp[1]; // replace new simplecode from function execute
             virtualnode[piter[1]] = cp[0];
         }
@@ -490,19 +527,19 @@ function analyzer(simplecode, virtualnode) {
  * @param {String} simplecode 
  */
 analyzer.attributes = function splitAttr(simplecode) {
-    let leftText = simplecode + "";
-    let attr = findEachCharIndexOf(simplecode, /\[/)
+    var leftText = simplecode + "";
+    var attr = findEachCharIndexOf(simplecode, /\[/)
         .map(function (from) {
-            let end = findEndBracket(simplecode, from, '[', ']');
-            let attrCoper = simplecode.substring(from + 1, end); // from next char of [ and get key=valyue strs
+            var end = findEndBracket(simplecode, from, '[', ']');
+            var attrCoper = simplecode.substring(from + 1, end); // from next char of [ and get key=valyue strs
             leftText = leftText.replace("[" + attrCoper + "]", "")
             if (!attrCoper || attrCoper.trim() == "=") {// it is too like this '[] or [=]'
                 return
             } else if (attrCoper.indexOf("=") != -1) { // it has equals signer
                 return attrCoper.split(',')
                     .map(function (kvcoper) {
-                        let kv = kvcoper.split("=");
-                        return { [kv[0]]: kv[1] }
+                        var kv = kvcoper.split("=");
+                        return array2Map(kv);
                     })
                     .nreduce(function (pre, next) {
                         return Object.assign(pre, next);
@@ -524,14 +561,14 @@ analyzer.attributes = function splitAttr(simplecode) {
  * @param {String} simplecode 
  */
 analyzer.text = function splitText(simplecode) {
-    let leftText = simplecode + "";
-    let closeto = 0;
-    let attr = findEachCharIndexOf(simplecode, /\{/)
+    var leftText = simplecode + "";
+    var closeto = 0;
+    var attr = findEachCharIndexOf(simplecode, /\{/)
         .map(function (from) {
-            let end = findEndBracket(simplecode, from, '{', '}');
+            var end = findEndBracket(simplecode, from, '{', '}');
             if (end > closeto) {
                 closeto = end;
-                let textCoper = simplecode.substring(from + 1, end);
+                var textCoper = simplecode.substring(from + 1, end);
                 leftText = leftText.replace("{" + textCoper + "}", "");
                 return textCoper;
             }
@@ -548,7 +585,7 @@ analyzer.text = function splitText(simplecode) {
  * @param {String} simplecode 
  */
 analyzer.id = function splitId(simplecode) {
-    let id = (simplecode.match(/#[a-zA-Z0-9_-]+/g) || []).map(function (id) {
+    var id = (simplecode.match(/#[a-zA-Z0-9_-]+/g) || []).map(function (id) {
         simplecode = simplecode.replace(id, "");
         return id.slice(1); // remove '#'
     })[0];
@@ -561,8 +598,8 @@ analyzer.id = function splitId(simplecode) {
  * @param {String} simplecode 
  */
 analyzer.classList = function splitClass(simplecode) {
-    let sameclass = "";
-    let classList = (simplecode.match(/\.\w+[_-]?\w+$/g) || [])
+    var sameclass = "";
+    var classList = (simplecode.match(/\.\w+[_-]?\w+$/g) || [])
         .map(function (clazz) {
             simplecode = simplecode.replace(clazz, "")
             return clazz.slice(1); // remove '.'
@@ -589,7 +626,7 @@ analyzer.tag = function splitTag(simplecode) {
  * @param {String} simplecode 
  */
 analyzer.size = function splitSize(simplecode) {
-    let size = parseInt((simplecode.match(/\*\d+/) || ['*1'])[0].slice(1))
+    var size = parseInt((simplecode.match(/\*\d+/) || ['*1'])[0].slice(1))
     return size < 1 ? 1 : size;
 }
 /** * 
@@ -604,7 +641,7 @@ function optionFiller(virtualnode, parse) {
     keys.forEach(function (key) {
         // find from classList,id,tag,attributes
         if (virtualnode.classList) {
-            let isParse = false;
+            var isParse = false;
             virtualnode.classList.forEach(function (clazz) {
                 if ("." + clazz == key) {
                     optionFiller.copy(virtualnode, parse[key])
@@ -625,7 +662,7 @@ function optionFiller(virtualnode, parse) {
 
         if (virtualnode.attributes) {
             Object.keys(virtualnode.attributes).forEach(function (attrkey) {
-                let kv = "[" + attrkey + "=" + virtualnode.attributes[attrkey] + "]"
+                var kv = "[" + attrkey + "=" + virtualnode.attributes[attrkey] + "]"
                 if (key == kv) {
                     optionFiller.copy(virtualnode, parse[key])
                 }
@@ -636,13 +673,13 @@ function optionFiller(virtualnode, parse) {
     })
 }
 optionFiller.copy = function (virtualnode, val) {
-    let valkeys = Object.keys(val);
+    var valkeys = Object.keys(val);
     if (!val || !Object.keys(val).length) {
         return
     }
     valkeys.forEach(function (key) {
-        let value = val[key];
-        let preValue = virtualnode[key];
+        var value = val[key];
+        var preValue = virtualnode[key];
         if (key == "html") {
             virtualnode._html = value;
         }
@@ -674,10 +711,10 @@ optionFiller.copy = function (virtualnode, val) {
  * @param {HTMLElement} parent
  */
 function treeParse(virtualNode, parent) {
-    let _this = this;
-    let loopSize = virtualNode.size;
-    let children = virtualNode.children;
-    let tag = virtualNode.tag;
+    var _this = this;
+    var loopSize = virtualNode.size;
+    var children = virtualNode.children;
+    var tag = virtualNode.tag;
 
     virtualNode.parent = parent;
     if (!virtualNode.doms) {
@@ -689,10 +726,10 @@ function treeParse(virtualNode, parent) {
     if (isNaN(loopSize)) {
         loopSize = 1;
     }
-    for (let i = 0; i < loopSize; i++) {
+    for (var i = 0; i < loopSize; i++) {
         if (tag) {
-            let result = createDOM(virtualNode, i,_this.styled);
-            let dom = result.dom;
+            var result = createDOM(virtualNode, i,_this.styled);
+            var dom = result.dom;
             virtualNode.doms.push(dom);
             if (result.noMore) {
                 continue;
@@ -714,11 +751,11 @@ function getset(ele) {
     }
     ele.dataSet = function (name, val) {
         if (this.virtual.data) {
-            let caller = arguments.callee.caller;
+            var caller = arguments.callee.caller;
             this.virtual.data[name] = val;
             if (caller == this.virtual._html || caller == this.virtual.text) {
             } else {
-                let exec = this.virtual._html || this.virtual.text;
+                var exec = this.virtual._html || this.virtual.text;
                 if (this.virtual._html) {
                     this.innerHTML = exec.call(this)
                 } else if (this.virtual.text) {
@@ -738,20 +775,20 @@ function getset(ele) {
  * @param {Any} data 
  */
 function createDOM(virtualNode, index,styled) {
-    let ele = document.createElement(virtualNode.tag);
-    let data = virtualNode.data;
-    let parent = virtualNode.parent;
-    let result = { dom: ele, noMore: false }
+    var ele = document.createElement(virtualNode.tag);
+    var data = virtualNode.data;
+    var parent = virtualNode.parent;
+    var result = { dom: ele, noMore: false }
     ele.index = index;
     parent.appendChild(ele);
     ele.virtual = virtualNode;
     Object.defineProperty(ele,'parent',{
-        get(){
+        get:function(){
             return this.virtual.parent;
         }
-    })
+    });
     getset(ele);
-    let text = virtualNode.text;
+    var text = virtualNode.text;
     if (text) { // cut up
         if (typeof text == "function") {
             text = text.call(ele, data);
@@ -769,15 +806,15 @@ function createDOM(virtualNode, index,styled) {
         ele.classList = virtualNode.classList.join(" ");
     }
     if (virtualNode.attributes) {
-        let attrs = virtualNode.attributes;
-        for (let key in attrs) {
+        var attrs = virtualNode.attributes;
+        for (var key in attrs) {
             ele.setAttribute(key, attrs[key])
         }
     }
     if(virtualNode.style){
-        let style = virtualNode.style;
-        for(let key in style){
-            let stylekey = key.replace(/\-([a-z])/g,function(e){ // some-define --> someDefine
+        var style = virtualNode.style;
+        for(var key in style){
+            var stylekey = key.replace(/\-([a-z])/g,function(e){ // some-define --> someDefine
                return e.substring(1).toUpperCase();
             });
             if(ele.style.hasOwnProperty(stylekey)){
@@ -790,7 +827,7 @@ function createDOM(virtualNode, index,styled) {
             }
         }
     }
-    let _html = virtualNode._html;
+    var _html = virtualNode._html;
     if (_html) { // cut up
         if (typeof _html == "function") {
             ele.innerHTML  = _html.call(ele, data);
@@ -807,7 +844,7 @@ function createDOM(virtualNode, index,styled) {
     return result;
 }
 function eventBind(virtualNode,ele){
-    let keys = Object.keys(virtualNode)||[];
+    var keys = Object.keys(virtualNode)||[];
     keys.forEach(function(eventName){
         if(eventName.startsWith("$")){
             ele.addEventListener(eventName.substring(1),virtualNode[eventName],{useCapture:false})
@@ -823,9 +860,9 @@ function StyleContent() { }
 
 StyleContent.prototype.getValue = function () {
     if (Object.keys(this).length > 0) {
-        let arr = [];
-        for (let key in this) {
-            let val = this[key];
+        var arr = [];
+        for (var key in this) {
+            var val = this[key];
             if (typeof val !== 'function') {
                 arr.push([key, val].join(":"))
             }
@@ -836,20 +873,20 @@ StyleContent.prototype.getValue = function () {
 }
 
 function styleShow(ndom, options) {
-    let styles = styleParse(options.style, options.styled);
-    let arr = [];
+    var styles = styleParse(options.style, options.styled);
+    var arr = [];
     ndom.styled = options.styled;
-    for (let key in styles) {
-        let val = styles[key];
+    for (var key in styles) {
+        var val = styles[key];
         if (val instanceof StyleContent) {
-            let nval = styles[key].getValue()
+            var nval = styles[key].getValue()
             if (nval != "") {
                 arr.push([key, nval].join(" "))
             }
         }
     }
     if(arr.length>0){
-        let styleElement = document.createElement('style');
+        var styleElement = document.createElement('style');
         styleElement.setAttribute('id', ndom.id)
         document.querySelector("head").appendChild(styleElement);
         styleElement.innerHTML = arr.join("\n")
@@ -857,9 +894,9 @@ function styleShow(ndom, options) {
 }
 
 function styleParse(style, styled, parentname, styleElement) {
-    let styleNames = ndom.styleNames; // all of style name
-    let next = parentname ? parentname + ">" : "";
-    let lastSelector;
+    var styleNames = ndom.styleNames; // all of style name
+    var next = parentname ? parentname + ">" : "";
+    var lastSelector;
     if (!styleElement) {
         styleElement = new StyleContent;
         lastSelector = styleElement;
@@ -868,7 +905,7 @@ function styleParse(style, styled, parentname, styleElement) {
     }
     if (style && Object.keys(style).length > 0) {
         for (var key in style) {
-            let val = style[key];
+            var val = style[key];
             
             if (key.startsWith('$')) {
                 // compose style like  $font:{ size:"",color:""}
@@ -880,18 +917,18 @@ function styleParse(style, styled, parentname, styleElement) {
                     console.error("illegal : not just use _ for self because it is useless at  [" + parentname + "]")
                 }
                 else {
-                    let selector = parentname + key.substring(1);
+                    var selector = parentname + key.substring(1);
                     styleElement[selector] = new StyleContent
                     styleParse(val, styled, selector, styleElement)
                 }
             }
             else {
-                let _key = key.replace(/([A-Z]+)/g, "-$1").toLocaleLowerCase();
-                let hasin = styleNames.hasOwnProperty(_key);
+                var _key = key.replace(/([A-Z]+)/g, "-$1").toLocaleLowerCase();
+                var hasin = styleNames.hasOwnProperty(_key);
                
-                let browserStyle = "";
+                var browserStyle = "";
                 prefix.forEach(function (pre) {
-                    let styleName = pre + _key;
+                    var styleName = pre + _key;
                     if (!hasin) {
                         hasin = styleNames.hasOwnProperty(styleName);
                     }
@@ -902,7 +939,7 @@ function styleParse(style, styled, parentname, styleElement) {
                 if (!hasin) {
                     // is a css selector
                     if (val + "" == "[object Object]") {
-                        let selector = next + key;
+                        var selector = next + key;
                         styleElement[selector] = new StyleContent
                         styleParse(val, styled, selector, styleElement)
                     } else {
@@ -921,9 +958,9 @@ function styleParse(style, styled, parentname, styleElement) {
 function styleValueParse(val, styled) {
     
     if (isString(val) && val.startsWith("%")) {
-        let params = val.substring(1).match(/([a-zA-Z]\w*)\((.+)\)/);
-        let fn = params[1];
-        let args = ((params[2] || "").split(",") || []).map(function (el) {
+        var params = val.substring(1).match(/([a-zA-Z]\w*)\((.+)\)/);
+        var fn = params[1];
+        var args = ((params[2] || "").split(",") || []).map(function (el) {
             return el.replace(/^['"](.+)['"]$/, "$1")
         })
         return styled[fn].apply(null, args);
@@ -946,8 +983,8 @@ function styleMixin(pre, current) {
 
 function Ndom(ncode, options, parent) {
 
-    let vitualNode = loader(wash(ncode), options);
-    let mode = options.mode;
+    var vitualNode = loader(wash(ncode), options);
+    var mode = options.mode;
     this.id = uuid(32);
     styleShow(this, options)
     if (!ndom.styleNames) {
@@ -963,7 +1000,7 @@ function Ndom(ncode, options, parent) {
             // it could be run until dom appened in a parent dom
             if (this._parent && !this._parent.isVirtual) {
                 if (this["mode_" + this.mode]) {
-                    let result = this["mode_" + this.mode](this.data);
+                    var result = this["mode_" + this.mode](this.data);
                     delete this["mode_" + this.mode];
                     return result;
                 } else {
@@ -1015,4 +1052,3 @@ function ndom(ncode, options, parent) {
     }
     return new Ndom(ncode, options, parent);
 }
-exp.ndom = ndom; } catch(e){ document.writeln(JSON.stringify(e)) }});

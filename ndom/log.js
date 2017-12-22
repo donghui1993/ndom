@@ -1,9 +1,11 @@
 window.onerror = function errors(message,atfile,linenumber,columnnumber,error){
+
     if(error){
-        document.write(error.name+error.message+"@"+atfile +":"+ linenumber + ":"+columnnumber)
+        document.write(error.name+" : "+error.message+"\r\n@"+atfile +":"+ linenumber + ":"+columnnumber)
     }else{
         document.writeln([message,atfile,linenumber,columnnumber,error])
-    }
+	}
+	
 }
 console.log = (function(oriLogFunc){
     return function()

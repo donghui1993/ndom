@@ -7,7 +7,7 @@ function loader(ncode, options, virtualnode) {
     if (!virtualnode) {
         virtualnode = new VirtualNode;
     }
-    let siblings = sameLevelSeparator(ncode);
+    var siblings = sameLevelSeparator(ncode);
     if (siblings.length == 1) {
         return spareparts(siblings[0], options, virtualnode);
     } else {
@@ -28,7 +28,7 @@ function loader(ncode, options, virtualnode) {
  */
 function spareparts(simplecode, options, virtualnode) {
     if (simplecode.startsWith(COMBIN)) { // (somecode)
-        let endBracketIndex = findEndBracket(simplecode, 0);
+        var endBracketIndex = findEndBracket(simplecode, 0);
         if (simplecode[endBracketIndex + 1] == '*') { // is size symbol
             virtualnode.size = parseInt(simplecode.substring(endBracketIndex + 2)) || 1; // skip of '*' 
             simplecode = simplecode.substring(0, endBracketIndex + 1);
@@ -48,11 +48,11 @@ function spareparts(simplecode, options, virtualnode) {
         optionFiller(virtualnode, options.parse);
     } else {
         // main code split from here
-        let len = simplecode.length,
+        var len = simplecode.length,
             index = 0,
             cursor = 0;
         for (; index < len; index++) {
-            let char = simplecode[index];
+            var char = simplecode[index];
             switch (char) {
                 case CHILD:
                     // left part  is parent and analize it 
@@ -66,7 +66,7 @@ function spareparts(simplecode, options, virtualnode) {
                     return virtualnode;
                 case COMBIN:
                     // find end bracket of COMBIN
-                    let end = findEndBracket(simplecode, index);
+                    var end = findEndBracket(simplecode, index);
                     virtualnode.children.push(loader(simplecode.substring(cursor, end), options));
                     cursor = end + 1; // skip end bracket
                     index = end; // 
@@ -87,37 +87,37 @@ function sameLevelSeparator(ncode) {
     if (!SAME_LEVEL.test(ncode)) {
         siblings.push(ncode)
     } else {
-        let len = ncode.length,
+        var len = ncode.length,
             cursor = 0;
-        for (let i = 0; i < len; i++) {
-            let char = ncode[i];
+        for (var i = 0; i < len; i++) {
+            var char = ncode[i];
             if (char == "{") {
                 i = findEndBracket(ncode, i, "{", "}");
                 continue;
             }
             if (char == SIBLING) {
-                let _sibling = ncode.substring(cursor, i);
+                var _sibling = ncode.substring(cursor, i);
                 cursor = i; // move cursor to i;
                 cursor++; // and jump over a symbol of sibling 
                 (_sibling != SIBLING) && siblings.push(_sibling); // if _sibling not '+' ,put it to siblings 
             } else if (char == CHILD) {
-                let _sibling = ncode.substring(cursor, len); // substring to the end
+                var _sibling = ncode.substring(cursor, len); // substring to the end
                 cursor = len; // cursor is ended
                 siblings.push(_sibling);
                 break; // end for
             } else if (char == COMBIN) {
-                let endBracketIndex = findEndBracket(ncode, i);
-                let from = cursor; // from (
-                let to = endBracketIndex; // to )
-                let cos = 0;
+                var endBracketIndex = findEndBracket(ncode, i);
+                var from = cursor; // from (
+                var to = endBracketIndex; // to )
+                var cos = 0;
                 if (ncode[endBracketIndex + 1] == '*') {
-                    let preNumber = ncode.substring(endBracketIndex + 2).match(/^\d+/g)[0];
+                    var preNumber = ncode.substring(endBracketIndex + 2).match(/^\d+/g)[0];
                     to += (preNumber.length + 2); // to *number 
                 } else {
                     from = cursor + 1 // from ( of next
                     cos += 1;
                 }
-                let _sibling = ncode.substring(from, to); // take between '(' and ')' ;
+                var _sibling = ncode.substring(from, to); // take between '(' and ')' ;
                 siblings.push(_sibling);
                 i = to + cos; // over a ')'
                 cursor = i + 1;// over ')'

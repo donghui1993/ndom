@@ -11,7 +11,7 @@ function analyzer(simplecode, virtualnode) {
         [/#\w+/, "id"]
     ].forEach(function (piter) {
         if (piter[0].test(simplecode)) {
-            let cp = analyzer[piter[1]](simplecode);
+            var cp = analyzer[piter[1]](simplecode);
             simplecode = cp[1]; // replace new simplecode from function execute
             virtualnode[piter[1]] = cp[0];
         }
@@ -26,19 +26,19 @@ function analyzer(simplecode, virtualnode) {
  * @param {String} simplecode 
  */
 analyzer.attributes = function splitAttr(simplecode) {
-    let leftText = simplecode + "";
-    let attr = findEachCharIndexOf(simplecode, /\[/)
+    var leftText = simplecode + "";
+    var attr = findEachCharIndexOf(simplecode, /\[/)
         .map(function (from) {
-            let end = findEndBracket(simplecode, from, '[', ']');
-            let attrCoper = simplecode.substring(from + 1, end); // from next char of [ and get key=valyue strs
+            var end = findEndBracket(simplecode, from, '[', ']');
+            var attrCoper = simplecode.substring(from + 1, end); // from next char of [ and get key=valyue strs
             leftText = leftText.replace("[" + attrCoper + "]", "")
             if (!attrCoper || attrCoper.trim() == "=") {// it is too like this '[] or [=]'
                 return
             } else if (attrCoper.indexOf("=") != -1) { // it has equals signer
                 return attrCoper.split(',')
                     .map(function (kvcoper) {
-                        let kv = kvcoper.split("=");
-                        return { [kv[0]]: kv[1] }
+                        var kv = kvcoper.split("=");
+                        return array2Map(kv);
                     })
                     .nreduce(function (pre, next) {
                         return Object.assign(pre, next);
@@ -60,14 +60,14 @@ analyzer.attributes = function splitAttr(simplecode) {
  * @param {String} simplecode 
  */
 analyzer.text = function splitText(simplecode) {
-    let leftText = simplecode + "";
-    let closeto = 0;
-    let attr = findEachCharIndexOf(simplecode, /\{/)
+    var leftText = simplecode + "";
+    var closeto = 0;
+    var attr = findEachCharIndexOf(simplecode, /\{/)
         .map(function (from) {
-            let end = findEndBracket(simplecode, from, '{', '}');
+            var end = findEndBracket(simplecode, from, '{', '}');
             if (end > closeto) {
                 closeto = end;
-                let textCoper = simplecode.substring(from + 1, end);
+                var textCoper = simplecode.substring(from + 1, end);
                 leftText = leftText.replace("{" + textCoper + "}", "");
                 return textCoper;
             }
@@ -84,7 +84,7 @@ analyzer.text = function splitText(simplecode) {
  * @param {String} simplecode 
  */
 analyzer.id = function splitId(simplecode) {
-    let id = (simplecode.match(/#[a-zA-Z0-9_-]+/g) || []).map(function (id) {
+    var id = (simplecode.match(/#[a-zA-Z0-9_-]+/g) || []).map(function (id) {
         simplecode = simplecode.replace(id, "");
         return id.slice(1); // remove '#'
     })[0];
@@ -97,8 +97,8 @@ analyzer.id = function splitId(simplecode) {
  * @param {String} simplecode 
  */
 analyzer.classList = function splitClass(simplecode) {
-    let sameclass = "";
-    let classList = (simplecode.match(/\.\w+[_-]?\w+$/g) || [])
+    var sameclass = "";
+    var classList = (simplecode.match(/\.\w+[_-]?\w+$/g) || [])
         .map(function (clazz) {
             simplecode = simplecode.replace(clazz, "")
             return clazz.slice(1); // remove '.'
@@ -125,6 +125,6 @@ analyzer.tag = function splitTag(simplecode) {
  * @param {String} simplecode 
  */
 analyzer.size = function splitSize(simplecode) {
-    let size = parseInt((simplecode.match(/\*\d+/) || ['*1'])[0].slice(1))
+    var size = parseInt((simplecode.match(/\*\d+/) || ['*1'])[0].slice(1))
     return size < 1 ? 1 : size;
 }

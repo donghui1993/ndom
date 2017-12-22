@@ -1,13 +1,13 @@
 function notInText(code) {
-    let sqb = findEachCharIndexOf(code, /\[/); // find index of [ ]
-    let lb = findEachCharIndexOf(code, /\{/); // find  index of { }
+    var sqb = findEachCharIndexOf(code, /\[/); // find index of [ ]
+    var lb = findEachCharIndexOf(code, /\{/); // find  index of { }
     // replace all of between [] or {} text to ""
     sqb.forEach(function (from) {
-        let to = findEndBracket(code, from, "[", "]")
+        var to = findEndBracket(code, from, "[", "]")
         code = code.replace(code.substring(from, to + 1), "");
     })
     lb.forEach(function (from) {
-        let to = findEndBracket(code, from, "{", "}")
+        var to = findEndBracket(code, from, "{", "}")
         code = code.replace(code.substring(from, to + 1), "");
     })
     // find if it is not in new code
@@ -43,7 +43,7 @@ function findEndBracket(ncode, from, left, right) {
     if (typeof from != 'number') {
         from = 0;
     }
-    let len = ncode.length,
+    var len = ncode.length,
         counter = 0; // counter brackets
     for (; from < len; from++) {
         if ((counter += getBracket(ncode[from], left, right)) <= 0) {
@@ -59,12 +59,12 @@ function findEndBracket(ncode, from, left, right) {
  * @param {Array<Number>} indexarr
  */
 function findEachCharIndexOf(str, reg, indexarr) {
-    let arr = str.match(reg); //match regexp of char
+    var arr = str.match(reg); //match regexp of char
     if (arr) {
         if (!indexarr) {
             indexarr = []
         }
-        let lastest = indexarr[indexarr.length - 1];
+        var lastest = indexarr[indexarr.length - 1];
         lastest = lastest == void 0 ? 0 : lastest + 1;
         indexarr.push(arr.index + lastest);
         return findEachCharIndexOf(str.slice(arr.index + 1), reg, indexarr);

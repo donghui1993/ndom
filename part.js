@@ -1,9 +1,11 @@
-{
+module.exports = {
     "out":"./ndom-cop.js",
-    "basepath":"./ndom/",
-    "path":[
-        "define.js",
+    // "out": "D:/phiz/public/js/ndom-cop.js",
+    "basepath": "./ndom/",
+    "path": [
         "log.js",
+        "polyfill.js",
+        "define.js",
         "browser.js",
         "tool.js",
         "wash.js",

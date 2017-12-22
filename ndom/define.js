@@ -13,11 +13,6 @@ var SIGN_CODE = /[\(>\+]/;
 Array.prototype.isEmpty = function () {
     return this.length === 0;
 }
-
-String.prototype.startsWith = function(str){
-    return this.indexOf(str) === 0;
-}
-
 /**
  * if Array is empty not execute reduce
  * if array length = 1 ,execute fn
@@ -33,34 +28,45 @@ Array.prototype.nreduce = function (fn) {
     return this;
 }
 
-function isString(str){
+function isString(str) {
     return typeof str === 'string'
 }
-function isFunc(fn){
+function isFunc(fn) {
     return typeof fn === 'function';
 }
-function isBool(bool){
+function isBool(bool) {
     return typeof bool === 'boolean';
 }
-function isEmptyObject(obj){
-    return !isString(obj)  &&
-           !isBool(obj) &&
-           !isFunc(obj) &&
-           Object.keys(obj).length === 0
+function isArray(arr) {
+    return Object.prototype.toString.call(arr) === '[object Array]';
 }
-
+function isTruth(bool){
+    return isBool(bool) && bool;
+}
+function isEmptyObject(obj) {
+    return !isString(obj) &&
+        !isBool(obj) &&
+        !isFunc(obj) &&
+        !isArray(arr) &&
+        Object.keys(obj).length === 0
+}
+function array2Map(arr) {
+    var obj = {};
+    obj[arr[0]] = arr[1];
+    return obj;
+}
 var basestr = "0123456789qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM";
 
-function uuid(length,prefix){
-  let str = "";
-  if(prefix === void 0){
-    prefix ="";
-  }
-  length -= prefix.length;
-  while(str.length<length){
-    str += basestr[ parseInt( Math.random()*basestr.length)]
-  }
-  return prefix + str;
+function uuid(length, prefix) {
+    var str = "";
+    if (prefix === void 0) {
+        prefix = "";
+    }
+    length -= prefix.length;
+    while (str.length < length) {
+        str += basestr[parseInt(Math.random() * basestr.length)]
+    }
+    return prefix + str;
 }
 /**
  * define virtual node
@@ -77,7 +83,7 @@ function VirtualNode() {
     this.parent;
     Object.defineProperty(this, 'html', {
         get: function () {
-            let html;
+            var html;
             if (this.parent && this.parent.isVirtual) {
                 return this.parent.innerHTML;
             }
@@ -99,7 +105,7 @@ function VirtualNode() {
                         }
                         return dom.html + nextdom.html;
                     }
-                    if (dom instanceof Array) {
+                    if (isArray(dom)) {
                         return dom[0].html;
                     } else {
                         return dom.html

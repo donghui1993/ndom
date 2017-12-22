@@ -7,9 +7,9 @@ function StyleContent() { }
 
 StyleContent.prototype.getValue = function () {
     if (Object.keys(this).length > 0) {
-        let arr = [];
-        for (let key in this) {
-            let val = this[key];
+        var arr = [];
+        for (var key in this) {
+            var val = this[key];
             if (typeof val !== 'function') {
                 arr.push([key, val].join(":"))
             }
@@ -20,20 +20,20 @@ StyleContent.prototype.getValue = function () {
 }
 
 function styleShow(ndom, options) {
-    let styles = styleParse(options.style, options.styled);
-    let arr = [];
+    var styles = styleParse(options.style, options.styled);
+    var arr = [];
     ndom.styled = options.styled;
-    for (let key in styles) {
-        let val = styles[key];
+    for (var key in styles) {
+        var val = styles[key];
         if (val instanceof StyleContent) {
-            let nval = styles[key].getValue()
+            var nval = styles[key].getValue()
             if (nval != "") {
                 arr.push([key, nval].join(" "))
             }
         }
     }
     if(arr.length>0){
-        let styleElement = document.createElement('style');
+        var styleElement = document.createElement('style');
         styleElement.setAttribute('id', ndom.id)
         document.querySelector("head").appendChild(styleElement);
         styleElement.innerHTML = arr.join("\n")
@@ -41,9 +41,9 @@ function styleShow(ndom, options) {
 }
 
 function styleParse(style, styled, parentname, styleElement) {
-    let styleNames = ndom.styleNames; // all of style name
-    let next = parentname ? parentname + ">" : "";
-    let lastSelector;
+    var styleNames = ndom.styleNames; // all of style name
+    var next = parentname ? parentname + ">" : "";
+    var lastSelector;
     if (!styleElement) {
         styleElement = new StyleContent;
         lastSelector = styleElement;
@@ -52,7 +52,7 @@ function styleParse(style, styled, parentname, styleElement) {
     }
     if (style && Object.keys(style).length > 0) {
         for (var key in style) {
-            let val = style[key];
+            var val = style[key];
             
             if (key.startsWith('$')) {
                 // compose style like  $font:{ size:"",color:""}
@@ -64,18 +64,18 @@ function styleParse(style, styled, parentname, styleElement) {
                     console.error("illegal : not just use _ for self because it is useless at  [" + parentname + "]")
                 }
                 else {
-                    let selector = parentname + key.substring(1);
+                    var selector = parentname + key.substring(1);
                     styleElement[selector] = new StyleContent
                     styleParse(val, styled, selector, styleElement)
                 }
             }
             else {
-                let _key = key.replace(/([A-Z]+)/g, "-$1").toLocaleLowerCase();
-                let hasin = styleNames.hasOwnProperty(_key);
+                var _key = key.replace(/([A-Z]+)/g, "-$1").toLocaleLowerCase();
+                var hasin = styleNames.hasOwnProperty(_key);
                
-                let browserStyle = "";
+                var browserStyle = "";
                 prefix.forEach(function (pre) {
-                    let styleName = pre + _key;
+                    var styleName = pre + _key;
                     if (!hasin) {
                         hasin = styleNames.hasOwnProperty(styleName);
                     }
@@ -86,7 +86,7 @@ function styleParse(style, styled, parentname, styleElement) {
                 if (!hasin) {
                     // is a css selector
                     if (val + "" == "[object Object]") {
-                        let selector = next + key;
+                        var selector = next + key;
                         styleElement[selector] = new StyleContent
                         styleParse(val, styled, selector, styleElement)
                     } else {
@@ -105,9 +105,9 @@ function styleParse(style, styled, parentname, styleElement) {
 function styleValueParse(val, styled) {
     
     if (isString(val) && val.startsWith("%")) {
-        let params = val.substring(1).match(/([a-zA-Z]\w*)\((.+)\)/);
-        let fn = params[1];
-        let args = ((params[2] || "").split(",") || []).map(function (el) {
+        var params = val.substring(1).match(/([a-zA-Z]\w*)\((.+)\)/);
+        var fn = params[1];
+        var args = ((params[2] || "").split(",") || []).map(function (el) {
             return el.replace(/^['"](.+)['"]$/, "$1")
         })
         return styled[fn].apply(null, args);

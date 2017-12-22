@@ -3,7 +3,7 @@
  * @param {String} ncode 
  */
 function wash(ncode) {
-    let brackets = isIntactBrackets(ncode);
+    var brackets = isIntactBrackets(ncode);
     if (brackets.isLost) {
         throw Error("'(' ')'  looks not exactly matched, left size is " + brackets.left + " but right size is " + brackets.right)
     }
@@ -16,8 +16,8 @@ function wash(ncode) {
  * @param {String} ncode 
  */
 function isIntactBrackets(ncode) {
-    let left = (ncode.match(/\(/g) || []).length;
-    let right = (ncode.match(/\)/g) || []).length;
+    var left = (ncode.match(/\(/g) || []).length;
+    var right = (ncode.match(/\)/g) || []).length;
     return {
         left: left,
         right: right,
@@ -43,11 +43,11 @@ function basicWash(ncode) {
  */
 function startAtBracket(ncode) {
     if (ncode.startsWith('(')) {
-        let end = findEndBracket(ncode);
+        var end = findEndBracket(ncode);
         if (ncode[end + 1] == "+") {// if next of end bracket is + it could be likely ( )+
             return ncode;
         }
-        let str = ncode.substring(1, end); // between ( and  )
+        var str = ncode.substring(1, end); // between ( and  )
         if (end != ncode.length - 1) { // not the end
             str += ncode.substr(end + 1);
             ncode = str;
@@ -59,13 +59,13 @@ function startAtBracket(ncode) {
     return ncode;
 }
 function moreBracket(ncode) {
-    let match = /\({2,}/.exec(ncode);
+    var match = /\({2,}/.exec(ncode);
     if (match) {
-        let len = match[0].length;
-        let from = match.index;
-        let end = findEndBracket(ncode, from);
+        var len = match[0].length;
+        var from = match.index;
+        var end = findEndBracket(ncode, from);
         if (end) {
-            let str = "(" + ncode.substring(from + len, end - len + 1) + ")" + ncode.substring(end + 1);
+            var str = "(" + ncode.substring(from + len, end - len + 1) + ")" + ncode.substring(end + 1);
             if (from != 0) {
                 str = ncode.substring(0, from) + str
             }

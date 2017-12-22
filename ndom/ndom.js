@@ -4,8 +4,8 @@ require("./domparse");
 
 function Ndom(ncode, options, parent) {
 
-    let vitualNode = loader(wash(ncode), options);
-    let mode = options.mode;
+    var vitualNode = loader(wash(ncode), options);
+    var mode = options.mode;
     this.id = uuid(32);
     styleShow(this, options)
     if (!ndom.styleNames) {
@@ -21,7 +21,7 @@ function Ndom(ncode, options, parent) {
             // it could be run until dom appened in a parent dom
             if (this._parent && !this._parent.isVirtual) {
                 if (this["mode_" + this.mode]) {
-                    let result = this["mode_" + this.mode](this.data);
+                    var result = this["mode_" + this.mode](this.data);
                     delete this["mode_" + this.mode];
                     return result;
                 } else {
