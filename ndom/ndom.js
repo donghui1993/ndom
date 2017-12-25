@@ -3,11 +3,9 @@ require("./style");
 require("./domparse");
 
 function Ndom(ncode, options, parent) {
-
     var vitualNode = loader(wash(ncode), options);
     var mode = options.mode;
     this.id = uuid(32);
-    styleShow(this, options)
     if (!ndom.styleNames) {
         ndom.styleNames =getComputedStyle(document.body);
     }
@@ -34,6 +32,7 @@ function Ndom(ncode, options, parent) {
             return this;
         }
     }
+    styleShow(this, options);
     treeParse.call(this,vitualNode, parent);
     this._ndom = vitualNode;
     this.data = options.data;

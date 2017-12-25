@@ -14,7 +14,7 @@ var polly = {
             throw new TypeError('Cannot convert undefined or null to object');
         }
         var output = Object(a);
-        for (var index = 1; index < arguments.length; i++) {
+        for (var index = 1; index < arguments.length; index++) {
             var source = arguments[index];
             if (source !== void 0 && source !== null) {
                 for (var nextKey in source) {

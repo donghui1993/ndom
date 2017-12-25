@@ -1,7 +1,6 @@
 window.onerror = function errors(message,atfile,linenumber,columnnumber,error){
-
     if(error){
-        document.write(error.name+" : "+error.message+"\r\n@"+atfile +":"+ linenumber + ":"+columnnumber)
+        document.write(error.name+" : "+error.message+"</br>第"+ linenumber + "行,第"+columnnumber+"列"+"\r\n@"+atfile )
     }else{
         document.writeln([message,atfile,linenumber,columnnumber,error])
 	}
