@@ -17,6 +17,15 @@
                 style: "none"
             }
         },
+        a: {
+            'text-decoration': "none",
+            '_:link': {
+                color: "blue"
+            },
+            '_:visited': {
+                color: "blue"
+            }
+        },
         '.header': {
             height: '%height(15)'
         },
@@ -31,7 +40,6 @@
                     transition: "transform 1s"
                 },
                 transition: "transform 1s",
-                width: '200px',
                 height: '200px',
                 display: "flex",
                 alignItems: 'center',
@@ -55,6 +63,9 @@
         styled: {
             height: function(pre) {
                 return window.innerHeight * parseInt(pre) / 100 + "px";
+            },
+            width: function(size) {
+                return window.innerWidth * parseInt(size) / 100 + "px";
             }
         },
         style: globalStyle,
@@ -64,7 +75,7 @@
                     parse: {
                         '.item': {
                             data: {
-                                item: ["专注", "专心", "专业", "专情"]
+                                item: ["专注", "专心", "专业"]
                             },
                             size: function() {
                                 return this.item.length;
@@ -84,17 +95,25 @@
                             i: 0,
                             data: {
                                 text: "Hello",
-                                val: ["你好", "Hello", "ハロー", "привет", "salve"]
+                                val: ["ALL IN ", "CSS SELECTOR LIKE", "FREEDOM", "NEW FRAMEWORK"]
                             },
-                            text: function() {
+                            html: function() {
                                 var _this = this;
                                 var val = _this.dataGet('val');
                                 var vt = _this.virtual;
                                 setTimeout(function() {
                                     _this.virtual.i++;
                                     _this.dataSet('text', val[vt.i % val.length]);
-                                }, 1000)
-                                return _this.dataSet('text', val[vt.i % val.length]) + " N-DOM";
+                                }, 1500)
+                                return ndom('a{' + _this.dataSet('text', val[vt.i % val.length]) + " N-DOM" + '}', {
+                                    parse: {
+                                        a: {
+                                            attributes: {
+                                                href: "https://github.com/donghui1993/ndom"
+                                            }
+                                        }
+                                    }
+                                }).html();
                             }
                         }
                     }
