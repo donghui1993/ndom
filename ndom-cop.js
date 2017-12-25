@@ -353,6 +353,7 @@ function styleParse(style, styled, parentname, styleElement) {
                 Object.assign(lastSelector, composeStyle(key.substring(1), val, styled));
             }
             else if (key.startsWith("_")) {
+               
                 if (key == "_") {
                     // only self
                     console.error("illegal : not just use _ for self because it is useless at  [" + parentname + "]")
@@ -932,7 +933,7 @@ function createDOM(virtualNode, index,styled) {
         ele.setAttribute('id', virtualNode.id)
     }
     if (virtualNode.classList) {
-        ele.classList = virtualNode.classList.join(" ");
+        ele.setAttribute('class',virtualNode.classList.join(" "));
     }
     if (virtualNode.attributes) {
         var attrs = virtualNode.attributes;
@@ -1017,6 +1018,7 @@ function Ndom(ncode, options, parent) {
     this.data = options.data;
     this._parent = parent;
     this.mode = mode;
+   
     return this;
 }
 Ndom.prototype.parent = function (dom) {

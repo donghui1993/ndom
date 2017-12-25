@@ -97,7 +97,7 @@ function createDOM(virtualNode, index,styled) {
         ele.setAttribute('id', virtualNode.id)
     }
     if (virtualNode.classList) {
-        ele.classList = virtualNode.classList.join(" ");
+        ele.setAttribute('class',virtualNode.classList.join(" "));
     }
     if (virtualNode.attributes) {
         var attrs = virtualNode.attributes;

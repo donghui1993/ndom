@@ -38,6 +38,7 @@ function Ndom(ncode, options, parent) {
     this.data = options.data;
     this._parent = parent;
     this.mode = mode;
+   
     return this;
 }
 Ndom.prototype.parent = function (dom) {

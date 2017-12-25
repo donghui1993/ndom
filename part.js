@@ -1,6 +1,6 @@
 module.exports = {
      "out":"./ndom-cop.js",
-    //"out": "D:/phiz/public/js/ndom-cop.js",
+   // "out": "D:/phiz/public/js/ndom-cop.js",
     "basepath": "./ndom/",
     "path": [
         "log.js",

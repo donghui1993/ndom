@@ -59,6 +59,7 @@ function styleParse(style, styled, parentname, styleElement) {
                 Object.assign(lastSelector, composeStyle(key.substring(1), val, styled));
             }
             else if (key.startsWith("_")) {
+               
                 if (key == "_") {
                     // only self
                     console.error("illegal : not just use _ for self because it is useless at  [" + parentname + "]")
