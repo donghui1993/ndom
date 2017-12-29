@@ -20,7 +20,7 @@ function build(){
     part.path.forEach(filepath => {
         let file = fs.readFileSync(part.basepath+filepath,{encoding:"utf-8"})
 
-        appendFileSync(file.replace(/require\(.+\)(;)?/g,"").replace(/(\r\n)+/,""));
+        appendFileSync(file.replace(/require\(.+\)(;)?/g,"").replace(/(\r\n)+/,"").replace(/(= |=)undefined /,'= void 0 '));
     });
 
    // appendFileSync("exp.ndom = ndom; });")

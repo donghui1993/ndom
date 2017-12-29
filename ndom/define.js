@@ -43,12 +43,15 @@ function isArray(arr) {
 function isTruth(bool){
     return isBool(bool) && bool;
 }
-function isEmptyObject(obj) {
+function isEmptyObject(obj) { // like {}
     return !isString(obj) &&
         !isBool(obj) &&
         !isFunc(obj) &&
         !isArray(arr) &&
         Object.keys(obj).length === 0
+}
+function isCommonObject(obj){
+    return obj instanceof Object;
 }
 function array2Map(arr) {
     var obj = {};

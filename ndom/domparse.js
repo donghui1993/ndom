@@ -111,7 +111,7 @@ function createDOM(virtualNode, index,styled) {
             var stylekey = key.replace(/\-([a-z])/g,function(e){ // some-define --> someDefine
                return e.substring(1).toUpperCase();
             });
-            if(ele.style.hasOwnProperty(stylekey)){
+            if(hasIn(ele.style,stylekey)){
                 ele.style[stylekey] = styleValueParse(style[key], styled);
                 if(ele.style[stylekey] === ""){
                     console.log('%c[STYLE-VALUE-WARN] : set style [ ' + stylekey + " : " + style[key] +" ] not success, because < " + style[key] + " > is  a invalid value" ,"color:orange")
